@@ -1,0 +1,7 @@
+dist
+node_modules
+*.log
+.eslintrc
+.idea
+.stylelintrc.json
+.package-lock.json

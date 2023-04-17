@@ -1,0 +1,23 @@
+{
+  "title": "H5PEditor.NotationInput",
+  "majorVersion": 0,
+  "minorVersion": 1,
+  "patchVersion": 0,
+  "runnable": 0,
+  "machineName": "H5PEditor.NotationInput",
+  "coreApi": {
+    "majorVersion": 1,
+    "minorVersion": 0
+  },
+  "author": "Tarmo Johannes",
+  "preloadedJs": [
+    {
+      "path": "dist/h5peditor-notationInput.js"
+    }
+  ],
+  "preloadedCss": [
+    {
+      "path": "dist/h5peditor-notationInput.css"
+    }
+  ]
+}
