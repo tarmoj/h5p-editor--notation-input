@@ -1,10 +1,10 @@
+
+- mitte Main, vaid NotationINnput ja NotationView
 TODO for notation Inut editor widget
 
 
 
-- librarystrings sisse
 
-- mitte Main, vaid NotationINnput ja NotationView
 
 - show NotationWidget always
 
@@ -14,5 +14,7 @@ TODO for notation Inut editor widget
 - naming? NotationInput või NotationWidget segades - (vt github.com näiteid)
 
 - remote repo (hiljem submodule) 50%
+
+- librarystrings sisse OK
 
 

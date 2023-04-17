@@ -37,6 +37,11 @@ export default class NotationWidget {
     // Let parent handle ready callbacks of children
     this.passReadies = true;
 
+    // translations =
+
+    this.l10n = H5PEditor.language["H5PEditor.NotationInput"].libraryStrings;
+    console.log("Translations: ", this.l10n);
+
     // DOM
     this.$container = H5P.jQuery('<div>', {
       class: 'h5peditor-boilerplate'
@@ -83,7 +88,7 @@ export default class NotationWidget {
     ReactDOM.render(
       <div>
         <Button onClick={()=>console.log("Button")}>This is MUI button</Button>
-        <Main correctDictation={correct} showFromDictation={start} resizeFunction={ () => console.log("resize")} t={ {"description":"notation"} }  />
+        <Main correctDictation={correct} showFromDictation={start} resizeFunction={ () => console.log("resize")} t={  this.l10n }  />
 
       </div>,
       this.root
