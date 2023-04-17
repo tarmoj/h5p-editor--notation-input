@@ -3,7 +3,7 @@
 TODO for notation Inut editor widget
 
 
-
+- NB! Kui muuta NotationInput komponenti, siis vaja kindlasti eristada see kuidagi sisestuse omast! Vaja mõelda.
 
 
 - show NotationWidget always

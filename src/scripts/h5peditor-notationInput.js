@@ -1,8 +1,9 @@
 import '../styles/h5peditor-notationInput.css';
 import React from "react";
 import * as ReactDOM from "react-dom";
-import Main from "./components/Main";
-import {Button} from '@mui/material';
+//import Main from "./components/Main";
+import {EditorNotationInput} from "./components/NotationInput";
+//import {Button} from '@mui/material';
 
 const correct = `
     \\clef "treble" \\key c \\major \\time 2/4  
@@ -87,8 +88,7 @@ export default class NotationWidget {
     // this.root is the container for React content
     ReactDOM.render(
       <div>
-        <Button onClick={()=>console.log("Button")}>This is MUI button</Button>
-        <Main correctDictation={correct} showFromDictation={start} resizeFunction={ () => console.log("resize")} t={  this.l10n }  />
+        <EditorNotationInput  t={  this.l10n }  />
 
       </div>,
       this.root
