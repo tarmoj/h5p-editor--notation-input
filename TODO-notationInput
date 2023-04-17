@@ -1,0 +1,18 @@
+TODO for notation Inut editor widget
+
+
+
+- librarystrings sisse
+
+- mitte Main, vaid NotationINnput ja NotationView
+
+- show NotationWidget always
+
+- ?? kas ja kui palju components kood taaskasutatav? oleks mõistlik.
+
+
+- naming? NotationInput või NotationWidget segades - (vt github.com näiteid)
+
+- remote repo (hiljem submodule) 50%
+
+

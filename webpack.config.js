@@ -28,7 +28,7 @@ module.exports = {
     dist: './src/entries/h5peditor-notationInput.js'
   },
   output: {
-    filename: 'h5peditor-nptationInput.js',
+    filename: 'h5peditor-notationInput.js',
     path: path.resolve(__dirname, 'dist')
   },
   module: {
