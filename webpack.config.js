@@ -21,14 +21,14 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: 'h5peditor-boilerplate.css'
+      filename: 'h5peditor-notationInput.css'
     })
   ],
   entry: {
-    dist: './src/entries/h5peditor-boilerplate.js'
+    dist: './src/entries/h5peditor-notationInput.js'
   },
   output: {
-    filename: 'h5peditor-boilerplate.js',
+    filename: 'h5peditor-nptationInput.js',
     path: path.resolve(__dirname, 'dist')
   },
   module: {

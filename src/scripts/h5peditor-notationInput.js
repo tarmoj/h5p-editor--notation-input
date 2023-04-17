@@ -1,4 +1,4 @@
-import '../styles/h5peditor-boilerplate.scss';
+import '../styles/h5peditor-notationInput.css';
 import React from "react";
 import * as ReactDOM from "react-dom";
 import Main from "./components/Main";
@@ -16,7 +16,7 @@ const start = ` \\clef "treble" \\key c \\major \\time 2/4
     c'4 `;
 
 /** Class for Boilerplate H5P widget */
-export default class Boilerplate {
+export default class NotationWidget {
 
   /**
    * @class

@@ -1,5 +1,5 @@
-import '../styles/h5peditor-boilerplate.scss';
-import Boilerplate from '../scripts/h5peditor-boilerplate';
+import '../styles/h5peditor-notationInput.css';
+import NotationWidget from '../scripts/h5peditor-notationInput';
 
 // Load library
-H5PEditor.widgets.boilerplate = Boilerplate;
+H5PEditor.widgets.notationwidget = NotationWidget;
