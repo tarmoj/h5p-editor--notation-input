@@ -1,5 +1,12 @@
 
-- mitte Main, vaid NotationINnput ja NotationView
+
+package.json
+originaalis:
+    "build": "cross-env NODE_ENV=production webpack",
+arenduseks prooviks:
+
+
+- mitte Main, vaid NotationINnput ja NotationView OK
 TODO for notation Inut editor widget
 
 

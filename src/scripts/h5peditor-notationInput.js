@@ -50,8 +50,12 @@ export default class NotationWidget {
     });
 
     // Instantiate original field (or create your own and call setValue)
+    // probably this creates the text field and I need to have something like createItem in degreeInput
     this.fieldInstance = new H5PEditor.widgets[this.field.type](this.parent, this.field, this.params, this.setValue);
-    this.fieldInstance.appendTo(this.$container);
+    //this.fieldInstance.appendTo(this.$container);
+
+
+
 
     // Create render root
     this.root = document.createElement("div");
@@ -60,7 +64,7 @@ export default class NotationWidget {
     // lilypondInput
     this.lyString = "";
 
-    this.setLyString = lyString => { console.log("reported lyString: ", lyString); this.lyString=lyString;}
+    this.setLyString = lyString => { console.log("reported lyString: ", lyString); this.lyString=lyString; this.setValue(lyString) }
 
     //const resize = () => { console.log("resize function called", this); this.trigger("resize"); } // to be forwarded to React components
 
