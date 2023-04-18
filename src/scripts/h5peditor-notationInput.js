@@ -30,7 +30,7 @@ export default class NotationWidget {
     this.params = params;
     this.setValue = setValue;
 
-    console.log("Editor constructor: params, values:", params, self.oldValues);
+    console.log("Editor constructor: params, values:", params, field, setValue);
 
 
     // Callbacks to call when parameters change
@@ -42,7 +42,6 @@ export default class NotationWidget {
     // translations
 
     this.l10n = H5PEditor.language["H5PEditor.NotationInput"].libraryStrings;
-    console.log("Translations: ", this.l10n);
 
     // DOM
     this.$container = H5P.jQuery('<div>', {
@@ -64,7 +63,7 @@ export default class NotationWidget {
     // lilypondInput
     this.lyString = "";
 
-    this.setLyString = lyString => { console.log("reported lyString: ", lyString); this.lyString=lyString; this.setValue(lyString) }
+    this.setLyString = lyString => { console.log("reported lyString: ", lyString); this.lyString=lyString; this.setValue(this.field, lyString) }
 
     //const resize = () => { console.log("resize function called", this); this.trigger("resize"); } // to be forwarded to React components
 
@@ -108,7 +107,7 @@ export default class NotationWidget {
       id: "validateButton",
       class: "button",
       text: "Press me",
-      click: () => { console.log("A button") }
+      click: () => { console.log("A PUtton"); this.validate(); this.setValue(this.field, this.lyString) }
     }).appendTo(this.$container);
 
     this.$container.appendTo($wrapper);
