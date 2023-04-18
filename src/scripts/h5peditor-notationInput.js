@@ -3,6 +3,9 @@ import React from "react";
 import * as ReactDOM from "react-dom";
 import {EditorNotationInput} from "./components/EditorNotationInput";
 
+const $ = H5P.jQuery;
+
+// temporary -
 const correct = `
     \\clef "treble" \\key c \\major \\time 2/4  
     c'4 c'8 d'8 | 
@@ -44,21 +47,14 @@ export default class NotationWidget {
     this.l10n = H5PEditor.language["H5PEditor.NotationInput"].libraryStrings;
 
     // DOM
-    this.$container = H5P.jQuery('<div>', {
-      class: 'h5peditor-inputNotation'
+    this.$container = $('<div>', {
+      class: 'field h5peditor-inputNotation'
     });
 
     // Instantiate original field (or create your own and call setValue)
     // probably this creates the text field and I need to have something like createItem in degreeInput
     this.fieldInstance = new H5PEditor.widgets[this.field.type](this.parent, this.field, this.params, this.setValue);
     //this.fieldInstance.appendTo(this.$container);
-
-
-
-
-    // Create render root
-    this.root = document.createElement("div");
-    this.$container.append(this.root);
 
     // lilypondInput
     this.lyString = "";
@@ -93,6 +89,22 @@ export default class NotationWidget {
    */
   appendTo($wrapper) {
 
+    // Add header:
+    $('<span>', {
+      'class': 'h5peditor-label',
+      html: this.field.label
+    }).appendTo(this.$container);
+
+    // Add description:
+    $('<span>', {
+      'class': 'h5peditor-field-description',
+      html: this.field.description
+    }).appendTo(this.$container)
+
+    // Create render root
+    this.root = document.createElement("div");
+    this.$container.append(this.root);
+
     // this.root is the container for React content
     ReactDOM.render(
       <div>
@@ -102,13 +114,7 @@ export default class NotationWidget {
       this.root
     );
 
-    //add some widgets to test with:
-    H5P.jQuery('<button>', {
-      id: "validateButton",
-      class: "button",
-      text: "Press me",
-      click: () => { console.log("A PUtton"); this.validate(); this.setValue(this.field, this.lyString) }
-    }).appendTo(this.$container);
+    $('<div>', {id: "errorsDiv", class:"h5p-errors"}).appendTo(this.$container);
 
     this.$container.appendTo($wrapper);
   }
@@ -120,15 +126,10 @@ export default class NotationWidget {
    */
   validate() {
     //return this.fieldInstance.validate();
-
+    console.log("Validate called");
     // this gets fired every time any of the inputs is changed
 
     this.$errors.html('');
-    // TODO: add condition for optional parameter
-
-
-
-    // somehow mark error -  class wongInput see degreeInput
 
 
     //console.log("Result is: ", ok, valueArray);
@@ -155,9 +156,9 @@ export default class NotationWidget {
    * Handle change of field.
    */
   handleFieldChange() {
+    console.log("Field change", this.changes);
     this.params = this.fieldInstance.params;
     this.changes.forEach((change) => {
-      console.log("Parameter change", change);
       change(this.params);
     });
   }
