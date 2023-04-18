@@ -8,7 +8,7 @@ const VF = VexFlow.Flow;
 const { Renderer } = VF;
 
 
-export function NotationView({
+export function EditorNotationView({
                                  notationInfo = defaultNotationInfo,
                                  width = 500, // this will be expanded when notation will grow longer
                                  height = 140,

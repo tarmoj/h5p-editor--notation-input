@@ -5,6 +5,9 @@ TODO for notation Inut editor widget
 
 - NB! Kui muuta NotationInput komponenti, siis vaja kindlasti eristada see kuidagi sisestuse omast! Vaja mõelda.
 
+- ka klaverisisestuse juures nuppud nool üles nool alla (enh muutus)
+
+TODO: time and key should be the same for all staves in notationInfo (the same in musical-dictations)
 
 - show NotationWidget always
 

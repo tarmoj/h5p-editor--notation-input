@@ -21,7 +21,7 @@ import {
     noteNames,
     parseLilypondDictation
 } from "./notationUtils";
-import {NotationView} from "./NotationView";
+import {EditorNotationView} from "./EditorNotationView";
 import Tie from '../../images/tie.png';
 import WholeNote from "../../images/whole.png" ; // require() does not work with Preview, do separate imports
 import HalfNote from "../../images/half.png"
@@ -39,11 +39,11 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 
 
-// TODO: how to do translation? est.json? https://react.i18next.com/ ?
+// TODO: this is in fact the same code as in h5p-musical-dictation NotationView - think of possibilities how to use the same file
 
 
 
-export function EditorNotationInput({ t = {"description":"empty"} }) {
+export function EditorNotationInput({ setLyString = ()=>console.log("setLyString"), t = {"description":"empty"} }) {
 
     const [keyboardStartingOctave, setKeyboardStartingOctave ] = useState(3);
     const [lyInput, setLyInput] = useState("");
@@ -59,7 +59,9 @@ export function EditorNotationInput({ t = {"description":"empty"} }) {
     // notation functions (add, insert, delete
 
     useEffect( () => {
-        setLyInput(notationInfoToLyString(notationInfo));
+        const lyString = notationInfoToLyString(notationInfo);
+        setLyString(lyString)
+        setLyInput(lyString);
     } , [notationInfo]);
 
     useEffect(() => {
@@ -81,8 +83,8 @@ export function EditorNotationInput({ t = {"description":"empty"} }) {
             }
 
         } else  { // ignore keys when focus in lilypond input
-            e.preventDefault(); // cancel default. Not sure if it good though
-            e.stopPropagation();
+            //e.preventDefault(); // cancel default. Not sure if it good though
+            //e.stopPropagation();
             if (noteNameKeys.includes(e.key.toLowerCase())) {
 
                 const noteName = (e.key.toLowerCase()==="h") ? "B": (e.key.toLowerCase()==="b" ) ? "Bb" : e.key.toUpperCase() ;
@@ -90,22 +92,32 @@ export function EditorNotationInput({ t = {"description":"empty"} }) {
                 let octave = (e.key.toLowerCase() === e.key ) ? "4" : "5"; // uppercase letters give 2nd octave; what about small?
                 if (e.ctrlKey) { // Ctrl + noteName -  small octava
                     octave = "3";
+                    e.preventDefault(); // cancel default. Not sure if it good though
+                    e.stopPropagation();
                 }
                 inputHandler(noteName+"/" + octave, currentDuration);
             } else if (e.key === "ArrowLeft") {
                 if (e.ctrlKey) {
                     console.log("Control left");
                     nextMeasure(-1);
+                    e.preventDefault(); // cancel default. Not sure if it good though
+                    e.stopPropagation();
                 } else {
                     //console.log("Just arrow left")
                     nextNote(-1);
+                    e.preventDefault(); // cancel default. Not sure if it good though
+                    e.stopPropagation();
                 }
             } else if (e.key === "ArrowRight") {
                 if (e.ctrlKey) {
                     nextMeasure(1);
+                    e.preventDefault(); // cancel default. Not sure if it good though
+                    e.stopPropagation();
                 } else {
                     //console.log("Just arrow right")
                     nextNote(1);
+                    e.preventDefault(); // cancel default. Not sure if it good though
+                    e.stopPropagation();
                 }
             } else if (e.key === "ArrowUp") {
                 noteStep(1);
@@ -479,7 +491,9 @@ export function EditorNotationInput({ t = {"description":"empty"} }) {
         const notation = parseLilypondDictation(lyInput);
         if (notation && setNotationInfo) {
             setNotationInfo(notation);
+            setLyInput(lyInput);
         } else {
+            setLyInput("");
             console.log("Notation error or setter not set");
         }
 
@@ -512,9 +526,17 @@ export function EditorNotationInput({ t = {"description":"empty"} }) {
         console.log("selected key: ", key);
         // put it to lilypond string -> notationInfo
         setCurrentKey(key); // inf form C, D etc -  think!
+        const notation = deepClone(notationInfo);
+        // TODO: time and key should be the same for all staves in notationInfo
+        // temporary- set it only for the first stave
+        for (let stave of notation.staves) {
+            stave.key = key;
+        }
+        setNotationInfo(notation);
     }
 
     const createHeaderRow = () => { // time tempo etc
+        // TODO: key select in two parts -  notename, major/minor
         return (
             <Grid item container spacing={1}>
 
@@ -525,12 +547,12 @@ export function EditorNotationInput({ t = {"description":"empty"} }) {
                             id="keySelect"
                             labelId="keyLabel"
                             // value={selectedKey}
-                            defaultValue={"c \\major"}
+                            defaultValue={"C"}
                             onChange={handleKeySelect}
                         >
-                            <MenuItem value={"c \\major"}>C</MenuItem>
-                            <MenuItem value={"d \\major"}>D</MenuItem>
-                            <MenuItem value={"e \\major"}>E</MenuItem>
+                            <MenuItem value={"C"}>C</MenuItem>
+                            <MenuItem value={"Cm"}>c</MenuItem>
+                            <MenuItem value={"D"}>D</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>
@@ -697,20 +719,19 @@ export function EditorNotationInput({ t = {"description":"empty"} }) {
 
 
 
-    const [showLilypond, setShowLilypond] = useState(false);
+    const [showLilypond, setShowLilypond] = useState(true);
 
     return <div className={"h5p-musical-dictations-uiDiv"}>
         <Grid container direction={"column"} spacing={1}>
-            {/*<Button size={"small"} onClick={ () => setShowLilypond(!showLilypond) } >Text input</Button>*/}
 
-            <FormGroup>
-                <FormControlLabel control={<Switch size={"small"} checked={showLilypond}
-                                                   onChange={ () => {
-                                                       setShowLilypond(!showLilypond);
-                                                       if (resizeFunction) resizeFunction();
-                                                   } } />}
-                                  label={t.textInput} />
-            </FormGroup>
+            {/*<FormGroup>*/}
+            {/*    <FormControlLabel control={<Switch size={"small"} checked={showLilypond}*/}
+            {/*                                       onChange={ () => {*/}
+            {/*                                           setShowLilypond(!showLilypond);*/}
+            {/*                                           if (resizeFunction) resizeFunction();*/}
+            {/*                                       } } />}*/}
+            {/*                      label={t.textInput} />*/}
+            {/*</FormGroup>*/}
             {showLilypond && <Grid container direction={"column"} spacing={1}>
                 <Grid item>{t.lilypondNotationLabel}:</Grid>
                 <Grid item>
@@ -725,7 +746,7 @@ export function EditorNotationInput({ t = {"description":"empty"} }) {
                 </Grid>
             </Grid> }
             {createHeaderRow()}
-            <NotationView id="userNotation" div={"score"} notationInfo={notationInfo} selectedNote={selectedNote} setSelectedNote={setSelectedNote} t={t} />
+            <EditorNotationView id="userNotation" div={"score"} notationInfo={notationInfo} selectedNote={selectedNote} setSelectedNote={setSelectedNote} t={t} />
 
             {createButtonsRow()}
             {createPianoRow()}

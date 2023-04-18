@@ -1,9 +1,7 @@
 import '../styles/h5peditor-notationInput.css';
 import React from "react";
 import * as ReactDOM from "react-dom";
-//import Main from "./components/Main";
-import {EditorNotationInput} from "./components/NotationInput";
-//import {Button} from '@mui/material';
+import {EditorNotationInput} from "./components/EditorNotationInput";
 
 const correct = `
     \\clef "treble" \\key c \\major \\time 2/4  
@@ -32,20 +30,23 @@ export default class NotationWidget {
     this.params = params;
     this.setValue = setValue;
 
+    console.log("Editor constructor: params, values:", params, self.oldValues);
+
+
     // Callbacks to call when parameters change
     this.changes = [];
 
     // Let parent handle ready callbacks of children
     this.passReadies = true;
 
-    // translations =
+    // translations
 
     this.l10n = H5PEditor.language["H5PEditor.NotationInput"].libraryStrings;
     console.log("Translations: ", this.l10n);
 
     // DOM
     this.$container = H5P.jQuery('<div>', {
-      class: 'h5peditor-boilerplate'
+      class: 'h5peditor-inputNotation'
     });
 
     // Instantiate original field (or create your own and call setValue)
@@ -56,6 +57,10 @@ export default class NotationWidget {
     this.root = document.createElement("div");
     this.$container.append(this.root);
 
+    // lilypondInput
+    this.lyString = "";
+
+    this.setLyString = lyString => { console.log("reported lyString: ", lyString); this.lyString=lyString;}
 
     //const resize = () => { console.log("resize function called", this); this.trigger("resize"); } // to be forwarded to React components
 
@@ -88,7 +93,7 @@ export default class NotationWidget {
     // this.root is the container for React content
     ReactDOM.render(
       <div>
-        <EditorNotationInput  t={  this.l10n }  />
+        <EditorNotationInput setLyString={this.setLyString}  t={  this.l10n }  />
 
       </div>,
       this.root
@@ -111,8 +116,30 @@ export default class NotationWidget {
    * @returns {boolean} True, if current value is valid, else false.
    */
   validate() {
-    return this.fieldInstance.validate();
+    //return this.fieldInstance.validate();
+
+    // this gets fired every time any of the inputs is changed
+
+    this.$errors.html('');
+    // TODO: add condition for optional parameter
+
+
+
+    // somehow mark error -  class wongInput see degreeInput
+
+
+    //console.log("Result is: ", ok, valueArray);
+    if (!this.lyString) {
+      console.log("Something wrong in lilypond");
+      this.$errors.append(H5PEditor.createError(this.l10n("wrong")));
+      return false;
+    } else {
+      return this.lyString;
+    }
+
   }
+
+
 
   /**
    * Remove self. Invoked by H5P core.
