@@ -48,6 +48,7 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
     const [keyboardStartingOctave, setKeyboardStartingOctave ] = useState(3);
     const [lyInput, setLyInput] = useState("");
     const [currentKey, setCurrentKey] = useState("C");
+    const [currentClef, setCurrentClef] = useState("treble");
     const [currentDuration, setCurrentDuration] = useState("4");
     const [dotted, setDotted] = useState(false); // empty string or "d" ; in future could be also "dd"
     const [lyFocus, setLyFocus] = useState(false);
@@ -203,7 +204,7 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
 
         console.log("Add note to position ", measureIndex, noteIndex);
         notation.staves[staff].measures[measureIndex].notes[noteIndex] = {
-            clef: "treble", keys: keys, duration: duration, auto_stem: "true"
+            clef: currentClef, keys: keys, duration: duration, auto_stem: "true"
         }; // + other fields later
 
         //console.log("Notes: ", notation.staves[staff].measures[measureIndex].notes)
@@ -221,7 +222,7 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
 
         console.log("Insert note to position ", measureIndex, noteIndex);
         notation.staves[staff].measures[measureIndex].notes.splice(noteIndex, 0,  {
-            clef: "treble", keys: keys, duration: duration, auto_stem: "true"
+            clef: currentClef, keys: keys, duration: duration, auto_stem: "true"
         } );
         console.log("Notes after insert: ", notation.staves[staff].measures[measureIndex].notes)
 
@@ -524,15 +525,30 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
     const handleKeySelect = (event) => {
         const key = event.target.value;
         console.log("selected key: ", key);
-        // put it to lilypond string -> notationInfo
-        setCurrentKey(key); // inf form C, D etc -  think!
+        setCurrentKey(key); // inf form C, Cm, C# etc
         const notation = deepClone(notationInfo);
         // TODO: time and key should be the same for all staves in notationInfo
-        // temporary- set it only for the first stave
+        // temporary- set it to all staves
         for (let stave of notation.staves) {
             stave.key = key;
         }
         setNotationInfo(notation);
+    }
+
+    const handleClefSelect = (event) => {
+        const clef = event.target.value;
+        setCurrentClef(clef); // NB! this does not update already existing VF stavenotes' clef value!
+        const notation = deepClone(notationInfo);
+        // TODO: time and key should be the same for all staves in notationInfo
+        // temporary- set only for the first stave -  two voiced dictations not supported
+        if (clef==="bass") {
+            setKeyboardStartingOctave(2);
+        } else {
+            setKeyboardStartingOctave(3);
+        }
+        notation.staves[0].clef = clef;
+        setNotationInfo(notation);
+
     }
 
     const createHeaderRow = () => { // time tempo etc
@@ -580,16 +596,16 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
 
                 <Grid item>
                     <FormControl variant="standard">
-                        <InputLabel id="clefLabel">{t.clef}</InputLabel>
+                        <InputLabel id="clefLabel">{t.clef || "Clef"}</InputLabel>
                         <Select
                             id="clefSelect"
                             // value={selectedClef}
                             defaultValue={"treble"}
                             label={t.clef}
-                            onChange={ (event) => console.log("clef: ", event.target.value)}
+                            onChange={ handleClefSelect }
                         >
-                            <MenuItem value={"treble"}>{t.treble}</MenuItem>
-                            <MenuItem value={"bass"}>{t.bass}</MenuItem>
+                            <MenuItem value={"treble"}>{t.treble || "treble"}</MenuItem>
+                            <MenuItem value={"bass"}>{t.bass || "bass"}</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>
