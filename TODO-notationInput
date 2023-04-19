@@ -9,6 +9,8 @@ arenduseks prooviks:
 
 validate -  kasuta parseLyString() ja kui null, siis viga; Kuidas märkida? kas punane joon lyKasti ümber? võibolla ei viitsi.
 
+topMargin - React komponendile (musical-dictation?? )
+
 - mitte Main, vaid NotationINnput ja NotationView OK
 TODO for notation Inut editor widget
 

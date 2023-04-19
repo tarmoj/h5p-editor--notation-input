@@ -775,7 +775,7 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
 
     const [showLilypond, setShowLilypond] = useState(true);
 
-    return <div className={"h5p-musical-dictations-uiDiv"}>
+    return <div className={"h5p-musical-dictations-uiDiv h5peditor-notationInput-margin-top"}>
         <Grid container direction={"column"} spacing={1}>
 
             {/*<FormGroup>*/}
@@ -787,7 +787,7 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
             {/*                      label={t.textInput} />*/}
             {/*</FormGroup>*/}
             {showLilypond && <Grid container direction={"column"} spacing={1}>
-                <Grid item>{t.lilypondNotationLabel}:</Grid>
+                {/*<Grid item>{t.lilypondNotationLabel}:</Grid>*/}
                 <Grid item>
                     <textarea rows="3" cols="50" value={lyInput}
                               onChange={event => setLyInput(event.target.value)}

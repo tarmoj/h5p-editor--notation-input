@@ -2,6 +2,7 @@ import '../styles/h5peditor-notationInput.css';
 import React from "react";
 import * as ReactDOM from "react-dom";
 import {EditorNotationInput} from "./components/EditorNotationInput";
+import {parseLilypondString} from "./components/notationUtils";
 
 const $ = H5P.jQuery;
 
@@ -48,29 +49,34 @@ export default class NotationWidget {
 
     // DOM
     this.$container = $('<div>', {
-      class: 'field h5peditor-inputNotation'
+      class: 'field h5peditor-notationInput'
     });
 
     // Instantiate original field (or create your own and call setValue)
     // probably this creates the text field and I need to have something like createItem in degreeInput
-    this.fieldInstance = new H5PEditor.widgets[this.field.type](this.parent, this.field, this.params, this.setValue);
+    //this.fieldInstance = new H5PEditor.widgets[this.field.type](this.parent, this.field, this.params, this.setValue);
     //this.fieldInstance.appendTo(this.$container);
 
     // lilypondInput
     this.lyString = "";
 
-    this.setLyString = lyString => { console.log("reported lyString: ", lyString); this.lyString=lyString; this.setValue(this.field, lyString) }
+    this.setLyString = lyString => {
+      console.log("reported lyString: ", lyString);
+      this.lyString=lyString;
+      this.validate();
+      //this.setValue(this.field, lyString) //  setValue called in validate()
+    }
 
     //const resize = () => { console.log("resize function called", this); this.trigger("resize"); } // to be forwarded to React components
 
 
 
     // Relay changes
-    if (this.fieldInstance.changes) {
-      this.fieldInstance.changes.push(() => {
-        this.handleFieldChange();
-      });
-    }
+    // if (this.fieldInstance.changes) {
+    //   this.fieldInstance.changes.push(() => {
+    //     this.handleFieldChange();
+    //   });
+    // }
 
     // Errors (or add your own)
     this.$errors = this.$container.find('.h5p-errors');
@@ -126,18 +132,24 @@ export default class NotationWidget {
    */
   validate() {
     //return this.fieldInstance.validate();
-    console.log("Validate called");
     // this gets fired every time any of the inputs is changed
+    const result = parseLilypondString(this.lyString);
+
+    console.log("Validate called, result: ", result);
+
 
     this.$errors.html('');
 
 
     //console.log("Result is: ", ok, valueArray);
-    if (!this.lyString) {
+    if (!result) {
       console.log("Something wrong in lilypond");
-      this.$errors.append(H5PEditor.createError(this.l10n("wrong")));
+      this.$errors.append(H5PEditor.createError(this.l10n.lilypondStringNotCorrect || "Error in lilypond input!"));
       return false;
     } else {
+      // Test:
+      this.$errors.append(H5PEditor.createError("Kõik on tegelikult korras!"));
+      this.setValue(this.field, this.lyString);
       return this.lyString;
     }
 
@@ -155,11 +167,11 @@ export default class NotationWidget {
   /**
    * Handle change of field.
    */
-  handleFieldChange() {
-    console.log("Field change", this.changes);
-    this.params = this.fieldInstance.params;
-    this.changes.forEach((change) => {
-      change(this.params);
-    });
-  }
+  // handleFieldChange() {
+  //   console.log("Field change", this.changes);
+  //   this.params = this.fieldInstance.params;
+  //   this.changes.forEach((change) => {
+  //     change(this.params);
+  //   });
+  // }
 }

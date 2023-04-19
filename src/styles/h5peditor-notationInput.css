@@ -1,3 +1,7 @@
 .h5peditor-notationInput {
   width: 100%;
 }
+
+.h5peditor-notationInput-margin-top {
+  margin-top: 1rem;
+}
