@@ -551,6 +551,19 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
 
     }
 
+    const handleTimeSelect = (event) => {
+        const time = event.target.value;
+        const notation = deepClone(notationInfo);
+        // TODO: time and key should be the same for all staves in notationInfo
+        // temporary- set only for all staves
+        for (let stave of notation.staves) {
+            stave.time = time;
+        }
+        setNotationInfo(notation);
+    }
+
+
+
     const createHeaderRow = () => { // time tempo etc
         // TODO: key select in two parts -  notename, major/minor
         return (
@@ -558,7 +571,7 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
 
                 <Grid item>
                     <FormControl variant="standard">
-                        <InputLabel id="keyLabel">{t.key}</InputLabel>
+                        <InputLabel id="keyLabel">{t.key || "Key"}</InputLabel>
                         <Select
                             labelId="keyLabel"
                             // value={selectedKey}
@@ -599,9 +612,8 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
                         <InputLabel id="clefLabel">{t.clef || "Clef"}</InputLabel>
                         <Select
                             id="clefSelect"
-                            // value={selectedClef}
                             defaultValue={"treble"}
-                            label={t.clef}
+                            label={t.clef || "Clef"}
                             onChange={ handleClefSelect }
                         >
                             <MenuItem value={"treble"}>{t.treble || "treble"}</MenuItem>
@@ -612,15 +624,20 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
 
                 <Grid item>
                     <FormControl variant="standard">
-                        <InputLabel id="timeLabel">{t.time}</InputLabel>
+                        <InputLabel id="timeLabel">{t.time || "Time"}</InputLabel>
                         <Select
-                            id="clefSelect"
-                            // value={selectedClef}
                             defaultValue={"4/4"}
-                            onChange={ (event) => console.log("clef: ", event.target.value)}
+                            onChange={ handleTimeSelect }
                         >
+                            <MenuItem value={"2/4"}>2/4</MenuItem>
                             <MenuItem value={"3/4"}>3/4</MenuItem>
                             <MenuItem value={"4/4"}>4/4</MenuItem>
+                            <MenuItem value={"5/4"}>5/4</MenuItem>
+                            <MenuItem value={"6/4"}>6/4</MenuItem>
+                            <MenuItem value={"3/8"}>3/8</MenuItem>
+                            <MenuItem value={"5/8"}>5/8</MenuItem>
+                            <MenuItem value={"6/8"}>6/8</MenuItem>
+                            <MenuItem value={"7/8"}>7/8</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>
