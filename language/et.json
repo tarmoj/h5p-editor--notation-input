@@ -30,6 +30,8 @@
     "emptyLilypondString": "Lilypondi teks on tühi!", 
     "isNotRecognizedNote" : " pole teadaolev täht või vältus.",
     "durationNotKnown" : "Võõras vältus! ",
-    "disclaimerText": "NB! See ei ole ametlik H5P.org sisutüüp. Kõigi probleemide korral pöörduge autori poole: tarmo.johannes@muba.edu.ee"
+    "disclaimerText": "NB! See ei ole ametlik H5P.org sisutüüp. Kõigi probleemide korral pöörduge autori poole: tarmo.johannes@muba.edu.ee",
+    "major": "duur",
+    "minor": "moll"
   }
 }

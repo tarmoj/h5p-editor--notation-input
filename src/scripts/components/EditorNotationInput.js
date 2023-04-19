@@ -544,7 +544,6 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
                     <FormControl variant="standard">
                         <InputLabel id="keyLabel">{t.key}</InputLabel>
                         <Select
-                            id="keySelect"
                             labelId="keyLabel"
                             // value={selectedKey}
                             defaultValue={"C"}
@@ -552,14 +551,36 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
                         >
                             <MenuItem value={"C"}>C</MenuItem>
                             <MenuItem value={"Cm"}>c</MenuItem>
+                            <MenuItem value={"C#"}>Cis</MenuItem>
+                            <MenuItem value={"C#m"}>cis</MenuItem>
+                            <MenuItem value={"Db"}>Des</MenuItem>
                             <MenuItem value={"D"}>D</MenuItem>
+                            <MenuItem value={"Dm"}>d</MenuItem>
+                            <MenuItem value={"Eb"}>Es</MenuItem>
+                            <MenuItem value={"Ebm"}>es</MenuItem>
+                            <MenuItem value={"E"}>E</MenuItem>
+                            <MenuItem value={"Em"}>e</MenuItem>
+                            <MenuItem value={"F"}>F</MenuItem>
+                            <MenuItem value={"Fm"}>f</MenuItem>
+                            <MenuItem value={"F#"}>Fis</MenuItem>
+                            <MenuItem value={"F#m"}>fis</MenuItem>
+                            <MenuItem value={"G"}>G</MenuItem>
+                            <MenuItem value={"Gm"}>g</MenuItem>
+                            <MenuItem value={"Ab"}>As</MenuItem>
+                            <MenuItem value={"Abm"}>as</MenuItem>
+                            <MenuItem value={"A"}>A</MenuItem>
+                            <MenuItem value={"Am"}>a</MenuItem>
+                            <MenuItem value={"Bb"}>B</MenuItem>
+                            <MenuItem value={"Bbm"}>b</MenuItem>
+                            <MenuItem value={"B"}>H</MenuItem>
+                            <MenuItem value={"Bm"}>h</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>
 
                 <Grid item>
                     <FormControl variant="standard">
-                        <InputLabel id="clefLabel">Clef</InputLabel>
+                        <InputLabel id="clefLabel">{t.clef}</InputLabel>
                         <Select
                             id="clefSelect"
                             // value={selectedClef}

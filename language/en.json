@@ -30,6 +30,8 @@
             "emptyLilypondString": "Empty Lilypond string!", 
             "isNotRecognizedNote" : " is not a recognized note or keyword.",
             "durationNotKnown" : "Duration not known! ",
-            "disclaimerText": "NB! This is not an official H5P.org content type. With any problems please turn to the author tarmo.johannes@muba.edu.ee"
+            "disclaimerText": "NB! This is not an official H5P.org content type. With any problems please turn to the author tarmo.johannes@muba.edu.ee",
+            "major": "major",
+            "minor": "minor"
   }
 }
