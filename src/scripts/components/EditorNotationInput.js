@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {
     Button,
     Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
@@ -57,6 +57,8 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
     const [ selectedNote, setSelectedNote] = useState({ measure: 0, note:-1, staff:0 } );
 
 
+    const notationDiv = useRef();
+
     // notation functions (add, insert, delete
 
     useEffect( () => {
@@ -65,12 +67,13 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
         setLyInput(lyString);
     } , [notationInfo]);
 
-    useEffect(() => {
-        document.addEventListener("keydown", onKeyDown);
-        return () => {
-            document.removeEventListener("keydown", onKeyDown);
-        };
-    });
+    // useEffect(() => {
+    //     document.addEventListener("keydown", onKeyDown);
+    //     //notationDiv.current.addEventListener("keydown", onKeyDown)
+    //     return () => {
+    //         document.removeEventListener("keydown", onKeyDown);
+    //     };
+    // });
 
     const onKeyDown = (e) => {
         const noteNameKeys = ["c", "d", "e", "f", "g", "a", "b", "h"];
@@ -775,9 +778,9 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
 
     const [showLilypond, setShowLilypond] = useState(true);
 
-    return <div className={"h5p-musical-dictations-uiDiv h5peditor-notationInput-margin-top"}>
+    return <div className={"h5p-musical-dictations-uiDiv h5peditor-notationInput-margin-top"} >
         <Grid container direction={"column"} spacing={1}>
-
+            <textarea></textarea>
             {/*<FormGroup>*/}
             {/*    <FormControlLabel control={<Switch size={"small"} checked={showLilypond}*/}
             {/*                                       onChange={ () => {*/}
@@ -789,10 +792,15 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
             {showLilypond && <Grid container direction={"column"} spacing={1}>
                 {/*<Grid item>{t.lilypondNotationLabel}:</Grid>*/}
                 <Grid item>
-                    <textarea rows="3" cols="50" value={lyInput}
+                    <textarea rows="3" cols="50" value={lyInput} tabIndex={-1}
+                              onKeyDown={ event => {
+                                  if (event.key==="Enter" && event.ctrlKey)  {
+                                      handleLyNotation();
+                                  }
+                              } }
                               onChange={event => setLyInput(event.target.value)}
-                              onFocus={() => setLyFocus(true)}
-                              onBlur={() => setLyFocus(false)}
+                              // onFocus={() => setLyFocus(true)}
+                              // onBlur={() => setLyFocus(false)}
                     />
                 </Grid>
                 <Grid item>
@@ -800,8 +808,9 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
                 </Grid>
             </Grid> }
             {createHeaderRow()}
-            <EditorNotationView id="userNotation" div={"score"} notationInfo={notationInfo} selectedNote={selectedNote} setSelectedNote={setSelectedNote} t={t} />
-
+            <div tabIndex={-1} onKeyDown={onKeyDown}>
+                <EditorNotationView id="userNotation" div={"score"} notationInfo={notationInfo} selectedNote={selectedNote} setSelectedNote={setSelectedNote} t={t} />
+            </div>
             {createButtonsRow()}
             {createPianoRow()}
 
