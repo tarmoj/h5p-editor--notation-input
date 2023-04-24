@@ -31,6 +31,8 @@ import SixteenthNote from "../../images/sixteenth.png"
 import Dot from "../../images/dot.png"
 import Rest from "../../images/rest.png"
 import AddBar from "../../images/add-bar.png"
+import NoteUp from "../../images/note-up.png"
+import NoteDown from "../../images/note-down.png"
 
 import BackspaceIcon from '@mui/icons-material/Backspace';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -671,57 +673,71 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
     const createButtonsRow = () => {
 
         return (
-            <Grid container item direction={"row"} spacing={1} alignItems={"center"}>
-                <Grid item>
-                    <ToggleButtonGroup
-                        value={currentDuration}
-                        exclusive
-                        onChange={ event => durationChange(event.currentTarget.value +  (dotted ? "d" : "" ) ) }
-                        aria-label="duration selection"
-                    >
-                        <ToggleButton value="1" aria-label="whole note" >
-                            <img src={WholeNote} />
-                            {/*<label style={{color:"red", fontSize:"0.5em", textAlign:"left",  left:"3", top:"-20" }} >1</label>*/}
+            <>
+                <Grid container item direction={"row"} spacing={1} alignItems={"center"}>
+                    <Grid item>
+                        <ToggleButtonGroup
+                            value={currentDuration}
+                            exclusive
+                            onChange={ event => durationChange(event.currentTarget.value +  (dotted ? "d" : "" ) ) }
+                            aria-label="duration selection"
+                        >
+                            <ToggleButton value="1" aria-label="whole note" >
+                                <img src={WholeNote} />
+                                {/*<label style={{color:"red", fontSize:"0.5em", textAlign:"left",  left:"3", top:"-20" }} >1</label>*/}
+                            </ToggleButton>
+                            <ToggleButton value="2" aria-label="half note">
+                                <img src={HalfNote} />
+                            </ToggleButton>
+                            <ToggleButton value="4" aria-label="quarter note">
+                                <img src={QuarterNote} />
+                            </ToggleButton>
+                            <ToggleButton value="8" aria-label="eighth note">
+                                <img src={EightNote} />
+                            </ToggleButton>
+                            <ToggleButton value="16" aria-label="sixteenth note">
+                                <img src={SixteenthNote} />
+                            </ToggleButton>
+                        </ToggleButtonGroup>
+                    </Grid>
+                    {/*ToggleButtons is used down here to give similar look, they are simple buttons by function*/}
+                    <Grid item>
+                        <ToggleButton sx={{height:51}} value={"."} aria-label={"add or remove dot"}  onClick={() => dotChange()}>
+                            <img src={Dot} />
                         </ToggleButton>
-                        <ToggleButton value="2" aria-label="half note">
-                            <img src={HalfNote} />
+                    </Grid>
+                    <Grid item>
+                        <ToggleButton  value={"rest"} aria-label={"rest"}  onClick={() => restHandler()}><img src={Rest} /></ToggleButton>
+                    </Grid>
+                    <Grid item>
+                        <ToggleButton sx={{height:51}} value={"tie"} aria-label={"add or remove tie"}  onClick={()=>tieChange()}>
+                            <img src={Tie}/>
                         </ToggleButton>
-                        <ToggleButton value="4" aria-label="quarter note">
-                            <img src={QuarterNote} />
-                        </ToggleButton>
-                        <ToggleButton value="8" aria-label="eighth note">
-                            <img src={EightNote} />
-                        </ToggleButton>
-                        <ToggleButton value="16" aria-label="sixteenth note">
-                            <img src={SixteenthNote} />
-                        </ToggleButton>
-                    </ToggleButtonGroup>
-                </Grid>
-                {/*ToggleButtons is used down here to give similar look, they are simple buttons by function*/}
-                <Grid item>
-                    <ToggleButton sx={{height:51}} value={"."} aria-label={"add or remove dot"}  onClick={() => dotChange()}>
-                       <img src={Dot} />
-                    </ToggleButton>
-                </Grid>
-                <Grid item>
-                    <ToggleButton  value={"rest"} aria-label={"rest"}  onClick={() => restHandler()}><img src={Rest} /></ToggleButton>
-                </Grid>
-                <Grid item>
-                    <ToggleButton sx={{height:51}} value={"tie"} aria-label={"add or remove tie"}  onClick={()=>tieChange()}>
-                        <img src={Tie}/>
-                    </ToggleButton>
-                </Grid>
-                <Grid item>
-                    <ToggleButton sx={{height:51}} value={"addBar"} aria-label={"add bar"} onClick={()=>addBar()}><img src={AddBar} /></ToggleButton>
-                </Grid>
-                <Grid item>
-                    <ToggleButton sx={{height:51}} value={"delete"} aria-label={"delete"} onClick={()=>deleteHandler()}> <BackspaceIcon /> </ToggleButton>
-                </Grid>
+                    </Grid>
+                    <Grid item>
+                        <ToggleButton sx={{height:51}} value={"addBar"} aria-label={"add bar"} onClick={()=>addBar()}><img src={AddBar} /></ToggleButton>
+                    </Grid>
+                    <Grid item>
+                        <ToggleButton sx={{height:51}} value={"delete"} aria-label={"delete"} onClick={()=>deleteHandler()}> <BackspaceIcon /> </ToggleButton>
+                    </Grid>
 
-                <Grid item>
-                    {createShortcutsDialog()}
+
                 </Grid>
-            </Grid>
+                <Grid container item direction={"row"} spacing={1} alignItems={"center"}>
+                    <Grid item>
+                        <ToggleButton sx={{height:51}} value={"noteUp"} aria-label={"note up"} onClick={()=>noteStep(1)}><img src={NoteUp} /></ToggleButton>
+                    </Grid>
+                    <Grid item>
+                        <ToggleButton sx={{height:51}} value={"noteDown"} aria-label={"note down"} onClick={()=>noteStep(-1)}><img src={NoteDown} /></ToggleButton>
+                    </Grid>
+                    <Grid item>
+                        <ToggleButton sx={{height:51}} value={"addBar"} aria-label={"add bar"} onClick={()=>addBar()}><img src={AddBar} /></ToggleButton>
+                    </Grid>
+                    <Grid item>
+                        {createShortcutsDialog()}
+                    </Grid>
+                </Grid>
+            </>
         );
     }
 
