@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {
     Button,
     Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
@@ -51,13 +51,9 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
     const [currentClef, setCurrentClef] = useState("treble");
     const [currentDuration, setCurrentDuration] = useState("4");
     const [dotted, setDotted] = useState(false); // empty string or "d" ; in future could be also "dd"
-    const [lyFocus, setLyFocus] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [notationInfo, setNotationInfo] = useState(defaultNotationInfo);
     const [ selectedNote, setSelectedNote] = useState({ measure: 0, note:-1, staff:0 } );
-
-
-    const notationDiv = useRef();
 
     // notation functions (add, insert, delete
 
@@ -78,81 +74,72 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
     const onKeyDown = (e) => {
         const noteNameKeys = ["c", "d", "e", "f", "g", "a", "b", "h"];
         //console.log("key pressed: ", e.key, e.ctrlKey, e.ctrl);
-        if (lyFocus) {
-            if (e.key==="Enter" && e.ctrlKey) {
-                //console.log("Ctrl + return pressed in lyinput");
-                handleLyNotation();
-                e.preventDefault(); // cancel default
-                e.stopPropagation();
-            }
 
-        } else  { // ignore keys when focus in lilypond input
-            //e.preventDefault(); // cancel default. Not sure if it good though
-            //e.stopPropagation();
-            if (noteNameKeys.includes(e.key.toLowerCase())) {
+        if (noteNameKeys.includes(e.key.toLowerCase())) {
 
-                const noteName = (e.key.toLowerCase()==="h") ? "B": (e.key.toLowerCase()==="b" ) ? "Bb" : e.key.toUpperCase() ;
-                console.log("Note from key", noteName);
-                let octave = (e.key.toLowerCase() === e.key ) ? "4" : "5"; // uppercase letters give 2nd octave; what about small?
-                if (e.ctrlKey) { // Ctrl + noteName -  small octava
-                    octave = "3";
-                    e.preventDefault(); // cancel default. Not sure if it good though
-                    e.stopPropagation();
-                }
-                inputHandler(noteName+"/" + octave, currentDuration);
-            } else if (e.key === "ArrowLeft") {
-                if (e.ctrlKey) {
-                    console.log("Control left");
-                    nextMeasure(-1);
-                    e.preventDefault(); // cancel default. Not sure if it good though
-                    e.stopPropagation();
-                } else {
-                    //console.log("Just arrow left")
-                    nextNote(-1);
-                    e.preventDefault(); // cancel default. Not sure if it good though
-                    e.stopPropagation();
-                }
-            } else if (e.key === "ArrowRight") {
-                if (e.ctrlKey) {
-                    nextMeasure(1);
-                    e.preventDefault(); // cancel default. Not sure if it good though
-                    e.stopPropagation();
-                } else {
-                    //console.log("Just arrow right")
-                    nextNote(1);
-                    e.preventDefault(); // cancel default. Not sure if it good though
-                    e.stopPropagation();
-                }
-            } else if (e.key === "ArrowUp") {
-                noteStep(1);
-                // perhaps ctrl + up/down -  change octava?
-                e.preventDefault();
-                e.stopPropagation();
-            } else if (e.key === "ArrowDown") {
-                noteStep(-1);
-                e.preventDefault();
+            const noteName = (e.key.toLowerCase()==="h") ? "B": (e.key.toLowerCase()==="b" ) ? "Bb" : e.key.toUpperCase() ;
+            console.log("Note from key", noteName);
+            let octave = (e.key.toLowerCase() === e.key ) ? "4" : "5"; // uppercase letters give 2nd octave; what about small?
+            if (e.ctrlKey) { // Ctrl + noteName -  small octava
+                octave = "3";
+                e.preventDefault(); // cancel default. Not sure if it good though
                 e.stopPropagation();
             }
-            else if (e.key === "1") {
-                durationChange("1" +  (dotted ? "d" : "" ));
-            } else if (e.key === "2") {
-                durationChange("2" +  (dotted ? "d" : "" ));
-            } else if (e.key === "4") {
-                durationChange("4" +  (dotted ? "d" : "" ));
-            } else if (e.key === "8") {
-                durationChange("8" +  (dotted ? "d" : "" ));
-            } else if (e.key === "6") {
-                durationChange("16" +  (dotted ? "d" : "" ));
-            } else if (e.key === ".") {
-                dotChange();
-            } else if (e.key === "r") {
-                restHandler();
-            } else if (e.key === "t") { // tie
-                tieChange();
-            } else if (e.key === "Backspace" || e.key === "Delete") {
-                deleteHandler();
+            inputHandler(noteName+"/" + octave, currentDuration);
+        } else if (e.key === "ArrowLeft") {
+            if (e.ctrlKey) {
+                console.log("Control left");
+                nextMeasure(-1);
+                e.preventDefault(); // cancel default. Not sure if it good though
+                e.stopPropagation();
+            } else {
+                //console.log("Just arrow left")
+                nextNote(-1);
+                e.preventDefault(); // cancel default. Not sure if it good though
+                e.stopPropagation();
             }
+        } else if (e.key === "ArrowRight") {
+            if (e.ctrlKey) {
+                nextMeasure(1);
+                e.preventDefault(); // cancel default. Not sure if it good though
+                e.stopPropagation();
+            } else {
+                //console.log("Just arrow right")
+                nextNote(1);
+                e.preventDefault(); // cancel default. Not sure if it good though
+                e.stopPropagation();
+            }
+        } else if (e.key === "ArrowUp") {
+            noteStep(1);
+            // perhaps ctrl + up/down -  change octava?
+            e.preventDefault();
+            e.stopPropagation();
+        } else if (e.key === "ArrowDown") {
+            noteStep(-1);
+            e.preventDefault();
+            e.stopPropagation();
+        } else if (e.key === "+") {
+            addBar();
+        } else if (e.key === "1") {
+            durationChange("1" +  (dotted ? "d" : "" ));
+        } else if (e.key === "2") {
+            durationChange("2" +  (dotted ? "d" : "" ));
+        } else if (e.key === "4") {
+            durationChange("4" +  (dotted ? "d" : "" ));
+        } else if (e.key === "8") {
+            durationChange("8" +  (dotted ? "d" : "" ));
+        } else if (e.key === "6") {
+            durationChange("16" +  (dotted ? "d" : "" ));
+        } else if (e.key === ".") {
+            dotChange();
+        } else if (e.key === "r") {
+            restHandler();
+        } else if (e.key === "t") { // tie
+            tieChange();
+        } else if (e.key === "Backspace" || e.key === "Delete") {
+            deleteHandler();
         }
+
     }
 
     //useEffect( () => console.log("selectedNote: ", selectedNote), [selectedNote] );
@@ -780,7 +767,6 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
 
     return <div className={"h5p-musical-dictations-uiDiv h5peditor-notationInput-margin-top"} >
         <Grid container direction={"column"} spacing={1}>
-            <textarea></textarea>
             {/*<FormGroup>*/}
             {/*    <FormControlLabel control={<Switch size={"small"} checked={showLilypond}*/}
             {/*                                       onChange={ () => {*/}
@@ -799,8 +785,6 @@ export function EditorNotationInput({ setLyString = ()=>console.log("setLyString
                                   }
                               } }
                               onChange={event => setLyInput(event.target.value)}
-                              // onFocus={() => setLyFocus(true)}
-                              // onBlur={() => setLyFocus(false)}
                     />
                 </Grid>
                 <Grid item>
