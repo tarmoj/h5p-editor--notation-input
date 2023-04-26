@@ -2,7 +2,7 @@ import '../styles/h5peditor-notationInput.css';
 import React from "react";
 import * as ReactDOM from "react-dom";
 import {EditorNotationInput} from "./components/EditorNotationInput";
-import {parseLilypondString} from "./components/notationUtils";
+import {parseLilypondString, decodeHtml} from "./components/notationUtils";
 
 const $ = H5P.jQuery;
 
@@ -34,14 +34,16 @@ export default class NotationWidget {
     this.params = params;
     this.setValue = setValue;
 
-    console.log("Editor constructor: params, values:", params, field, setValue);
+    this.oldLyString = decodeHtml(params);
+
+    console.log("Editor constructor: params, old LyString:", params, this.oldLyString);
 
 
     // Callbacks to call when parameters change
-    this.changes = [];
+    //this.changes = [];
 
     // Let parent handle ready callbacks of children
-    this.passReadies = true;
+    //this.passReadies = true;
 
     // translations
 
@@ -114,7 +116,7 @@ export default class NotationWidget {
     // this.root is the container for React content
     ReactDOM.render(
       <div>
-        <EditorNotationInput setLyString={this.setLyString}  t={  this.l10n }  />
+        <EditorNotationInput  lyStart={this.oldLyString}  setLyString={this.setLyString}  t={  this.l10n }  />
 
       </div>,
       this.root

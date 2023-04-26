@@ -45,10 +45,10 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 
 
-export function EditorNotationInput({ setLyString = ()=>console.log("setLyString"), t = {"description":"empty"} }) {
+export function EditorNotationInput({ lyStart="", setLyString = ()=>console.log("setLyString"), t = {"description":"empty"} }) {
 
     const [keyboardStartingOctave, setKeyboardStartingOctave ] = useState(3);
-    const [lyInput, setLyInput] = useState("");
+    const [lyInput, setLyInput] = useState(lyStart);
     const [currentKey, setCurrentKey] = useState("C");
     const [currentClef, setCurrentClef] = useState("treble");
     const [currentDuration, setCurrentDuration] = useState("4");
