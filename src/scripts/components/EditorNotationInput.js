@@ -45,24 +45,24 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 
 
-export function EditorNotationInput({ lyStart="", setLyString = ()=>console.log("setLyString"), t = {"description":"empty"} }) {
+export function EditorNotationInput({ lyString="", setLyString = ()=>console.log("setLyString"), t = {"description":"empty"} }) {
 
     const [keyboardStartingOctave, setKeyboardStartingOctave ] = useState(3);
-    const [lyInput, setLyInput] = useState(lyStart);
+    const [lyInput, setLyInput] = useState();
     const [currentKey, setCurrentKey] = useState("C");
     const [currentClef, setCurrentClef] = useState("treble");
     const [currentDuration, setCurrentDuration] = useState("4");
     const [dotted, setDotted] = useState(false); // empty string or "d" ; in future could be also "dd"
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [notationInfo, setNotationInfo] = useState(defaultNotationInfo);
+    const [notationInfo, setNotationInfo] = useState(lyString ?  parseLilypondDictation(lyString) : defaultNotationInfo);
     const [ selectedNote, setSelectedNote] = useState({ measure: 0, note:-1, staff:0 } );
 
     // notation functions (add, insert, delete
 
     useEffect( () => {
-        const lyString = notationInfoToLyString(notationInfo);
-        setLyString(lyString)
-        setLyInput(lyString);
+        const ly = notationInfoToLyString(notationInfo);
+        setLyString(ly);
+        setLyInput(ly);
     } , [notationInfo]);
 
     // useEffect(() => {
@@ -456,25 +456,6 @@ export function EditorNotationInput({ lyStart="", setLyString = ()=>console.log(
             noteChange(vfNote);
         }
 
-        // if (selectedNote.note-parseInt(selectedNote.note) === 0.5) {
-        //     const newPosition = deepClone(selectedNote);
-        //     newPosition.note = selectedNote.note + 0.5; // to insert it into right place
-        //     insertNote(newPosition, [vfNote], currentDuration.toString())
-        // } else if (selectedNote.note<0) { // signals that none selected, insert in the end
-        //     addNote([vfNote], currentDuration.toString() );
-        // } else {
-        //     replaceNote(selectedNote, [vfNote], currentDuration.toString() );
-        // }
-
-
-        //const lyNote = getLyNoteByMidiNoteInKey(midiNote, key); // suggests correct enharmonic note for black key depening on the tonality
-
-        // if (vtNote && !chordPopupOpen) {
-        //     dispatch(insertVtNote(vtNote));
-        // }
-        // insert to text in right position, check spaces, add if necessary
-        //console.log("lyNote", lyNote);
-        //setLyInput(lyInput + " " + lyNote + currentDuration) // later this would enter a vfnote to notationInfo in correct place....
 
     }
 
@@ -485,6 +466,7 @@ export function EditorNotationInput({ lyStart="", setLyString = ()=>console.log(
         if (notation && setNotationInfo) {
             setNotationInfo(notation);
             setLyInput(lyInput);
+            setLyString(lyInput)
         } else {
             setLyInput("");
             console.log("Notation error or setter not set");

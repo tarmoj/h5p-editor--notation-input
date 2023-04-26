@@ -116,7 +116,7 @@ export default class NotationWidget {
     // this.root is the container for React content
     ReactDOM.render(
       <div>
-        <EditorNotationInput  lyStart={this.oldLyString}  setLyString={this.setLyString}  t={  this.l10n }  />
+        <EditorNotationInput  lyString={this.oldLyString}  setLyString={this.setLyString}  t={  this.l10n }  />
 
       </div>,
       this.root
