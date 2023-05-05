@@ -112,7 +112,7 @@ export default class NotationWidget {
     // Create render root
     this.root = document.createElement("div");
     this.$container.append(this.root);
-
+  
     // this.root is the container for React content
     ReactDOM.render(
       <div>

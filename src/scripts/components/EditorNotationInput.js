@@ -14,7 +14,7 @@ import {Piano} from "react-piano";
 import 'react-piano/dist/styles.css';
 import classNames from 'classnames';
 import {
-    addMeasure,
+    addMeasure, removeMeasure,
     deepClone, defaultNotationInfo,
     getVfNoteByMidiNoteInKey,
     notationInfoToLyString,
@@ -276,6 +276,13 @@ export function EditorNotationInput({ lyString="", setLyString = ()=>console.log
         const newNotationInfo = deepClone(notationInfo);
         addMeasure(newNotationInfo, 1);
         setNotationInfo(newNotationInfo);
+    }
+
+    const deleteBar = () => {
+        const newNotationInfo = deepClone(notationInfo);
+        removeMeasure(newNotationInfo, selectedNote.measure);
+        setNotationInfo(newNotationInfo);
+        //setSelectedNote({note: -1, measure: selectedNote.measure, staff: selectedNote.staff});
     }
 
     // TODO - mõtle siin ,kuidas asendada viimane noot, kui selle mingi operatsioon. Viimase noodi valimine tehtud, aga vaja anda ka positsioon
@@ -697,9 +704,6 @@ export function EditorNotationInput({ lyString="", setLyString = ()=>console.log
                         </ToggleButton>
                     </Grid>
                     <Grid item>
-                        <ToggleButton sx={{height:51}} value={"addBar"} aria-label={"add bar"} onClick={()=>addBar()}><img src={AddBar} /></ToggleButton>
-                    </Grid>
-                    <Grid item>
                         <ToggleButton sx={{height:51}} value={"delete"} aria-label={"delete"} onClick={()=>deleteHandler()}> <BackspaceIcon /> </ToggleButton>
                     </Grid>
 
@@ -714,6 +718,9 @@ export function EditorNotationInput({ lyString="", setLyString = ()=>console.log
                     </Grid>
                     <Grid item>
                         <ToggleButton sx={{height:51}} value={"addBar"} aria-label={"add bar"} onClick={()=>addBar()}><img src={AddBar} /></ToggleButton>
+                    </Grid>
+                    <Grid item>
+                        <ToggleButton sx={{height:51}} value={"deleteBar"} aria-label={"delete bar"} onClick={()=>deleteBar()}>Del. bar</ToggleButton>
                     </Grid>
                     <Grid item>
                         {createShortcutsDialog()}

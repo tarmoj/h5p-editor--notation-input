@@ -116,7 +116,7 @@ export function EditorNotationView({
 
         if (measureIndex===-1) {
             console.log("No measure found");
-            return null; // does this break something
+            return null;
         }
 
         const padding = 5 ; // N // px to left and right
@@ -163,7 +163,7 @@ export function EditorNotationView({
         //const vfStaves = [[], []]; //  NB! think of better name! this is vexflow staves actually. do we need to store them at all? -  later: define by stave count [ Array(notationIfo.staves.length ]
         const defaultWidth = 200;
         //const currentPositionInfo = [];
-        const newStaveInfo = staveInfo.slice(0);
+        const newStaveInfo = staveInfo.slice(0); // what to do if a measure is deleted? [[],[]] did not work...
         const allStaveNotes = [[],[]];
         //How can I pre-calculate the width of a voice?
         //
@@ -335,7 +335,8 @@ export function EditorNotationView({
         let cursorX = -1, cursorColor="lightblue";
         if (noteToHighlight) {
             cursorX = noteToHighlight.getNoteHeadBeginX()-5;
-        } else {
+        } else if (staveInfo[selectedNote.staff][selectedNote.measure])  {
+            //console.log("TEST: ", staveInfo[selectedNote.staff][selectedNote.measure], selectedNote );
             if (selectedNote && selectedNote.note<0) { // last note
                 if (staveInfo[selectedNote.staff][selectedNote.measure].staveNotes.length===0) {
                     cursorX = staveInfo[selectedNote.staff][selectedNote.measure].vfStave.getNoteStartX() + 10; // if not notes in the bar, draw it in the beginning
