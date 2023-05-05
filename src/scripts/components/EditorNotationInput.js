@@ -33,6 +33,7 @@ import Rest from "../../images/rest.png"
 import AddBar from "../../images/add-bar.png"
 import NoteUp from "../../images/note-up.png"
 import NoteDown from "../../images/note-down.png"
+import DeleteBar from "../../images/delete-bar.png"
 
 import BackspaceIcon from '@mui/icons-material/Backspace';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -720,7 +721,7 @@ export function EditorNotationInput({ lyString="", setLyString = ()=>console.log
                         <ToggleButton sx={{height:51}} value={"addBar"} aria-label={"add bar"} onClick={()=>addBar()}><img src={AddBar} /></ToggleButton>
                     </Grid>
                     <Grid item>
-                        <ToggleButton sx={{height:51}} value={"deleteBar"} aria-label={"delete bar"} onClick={()=>deleteBar()}>Del. bar</ToggleButton>
+                        <ToggleButton sx={{height:51}} value={"deleteBar"} aria-label={"delete bar"} onClick={()=>deleteBar()}><img src={DeleteBar} /></ToggleButton>
                     </Grid>
                     <Grid item>
                         {createShortcutsDialog()}
