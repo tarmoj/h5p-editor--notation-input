@@ -40,11 +40,13 @@ export function EditorNotationView({
         context.clear();
         context.setFont('Arial', 10, '').setBackgroundFillStyle('#eeeedd');
 
-        //console.log("Selected note in draw hook: ", selectedNote);
-
         draw(notationInfo, context); // should we also pass renderer?
 
     }, [notationInfo, width, height, selectedNote]);
+
+    useEffect( () => {
+        rendererRef.current.getContext().svg.onclick = (event) => handleClick(event); // update if number of bars changed
+    }, [staveInfo] );
 
 
     const setInputCursor = (x,color = "lightblue" ) => {
@@ -109,7 +111,7 @@ export function EditorNotationView({
             //console.log("Stave coordinates: ", vfStave.getX(), vfStave.getNoteStartX(), vfStave.getNoteEndX(), vfStave.getWidth());
             if (x>=vfStave.getX() && x<=vfStave.getNoteEndX()) { // was .getNoteStartX, but this is wrong in bar 1
                 measureIndex = i;
-                console.log("Stave click in m. index ", measureIndex);
+                //console.log("Stave click in m. index ", measureIndex);
                 break;
             }
         }
@@ -133,7 +135,7 @@ export function EditorNotationView({
         }
 
         if ( x<staveInfo[staffIndex][measureIndex].staveNotes.at(0).getNoteHeadBeginX()-padding ) {
-            console.log("click before last note in bar", measureIndex);
+            //console.log("click before last note in bar", measureIndex);
             return {note: 0, measure: measureIndex, staff: staffIndex}
         }
 
@@ -146,7 +148,7 @@ export function EditorNotationView({
             if (x>= note.getNoteHeadBeginX()-padding && x<=note.getNoteHeadEndX()+padding ) {
                 noteIndex = i;
             } else if (nextNote && x>note.getNoteHeadEndX()+padding && x<nextNote.getNoteHeadBeginX()-padding) {
-                console.log("click In between after ", i);
+                //console.log("click In between after ", i);
                 noteIndex = i + 0.5;
 
             }
@@ -163,7 +165,7 @@ export function EditorNotationView({
         //const vfStaves = [[], []]; //  NB! think of better name! this is vexflow staves actually. do we need to store them at all? -  later: define by stave count [ Array(notationIfo.staves.length ]
         const defaultWidth = 200;
         //const currentPositionInfo = [];
-        const newStaveInfo = staveInfo.slice(0); // what to do if a measure is deleted? [[],[]] did not work...
+        const newStaveInfo =  [[],[]]; //staveInfo.slice(0); // what to do if a measure is deleted? [[],[]] did not work...
         const allStaveNotes = [[],[]];
         //How can I pre-calculate the width of a voice?
         //
@@ -332,22 +334,22 @@ export function EditorNotationView({
 
 
         // draw selected note cursor/highlight the note if any:
+
         let cursorX = -1, cursorColor="lightblue";
         if (noteToHighlight) {
             cursorX = noteToHighlight.getNoteHeadBeginX()-5;
-        } else if (staveInfo[selectedNote.staff][selectedNote.measure])  {
-            //console.log("TEST: ", staveInfo[selectedNote.staff][selectedNote.measure], selectedNote );
+        } else if (newStaveInfo[selectedNote.staff][selectedNote.measure])  {
             if (selectedNote && selectedNote.note<0) { // last note
-                if (staveInfo[selectedNote.staff][selectedNote.measure].staveNotes.length===0) {
-                    cursorX = staveInfo[selectedNote.staff][selectedNote.measure].vfStave.getNoteStartX() + 10; // if not notes in the bar, draw it in the beginning
+                if (newStaveInfo[selectedNote.staff][selectedNote.measure].staveNotes.length===0) {
+                    cursorX = newStaveInfo[selectedNote.staff][selectedNote.measure].vfStave.getNoteStartX() + 10; // if not notes in the bar, draw it in the beginning
                     //console.log("Empty bar",selectedNote.measure )
                 } else {
-                    cursorX = staveInfo[selectedNote.staff][selectedNote.measure].staveNotes.at(-1).getNoteHeadEndX() + 5;
+                    cursorX = newStaveInfo[selectedNote.staff][selectedNote.measure].staveNotes.at(-1).getNoteHeadEndX() + 5;
                     //console.log("After last note",selectedNote.measure  )
 
                 }
             } else if  (selectedNote && selectedNote.note-parseInt(selectedNote.note) === 0.5) { // in between
-                cursorX = staveInfo[selectedNote.staff][selectedNote.measure].staveNotes[ parseInt(selectedNote.note) ].getNoteHeadEndX() + 5;
+                cursorX = newStaveInfo[selectedNote.staff][selectedNote.measure].staveNotes[ parseInt(selectedNote.note) ].getNoteHeadEndX() + 5;
                 cursorColor = "lightgreen";
             }
         }

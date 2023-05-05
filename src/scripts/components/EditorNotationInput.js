@@ -283,7 +283,6 @@ export function EditorNotationInput({ lyString="", setLyString = ()=>console.log
         const newNotationInfo = deepClone(notationInfo);
         removeMeasure(newNotationInfo, selectedNote.measure);
         setNotationInfo(newNotationInfo);
-        //setSelectedNote({note: -1, measure: selectedNote.measure, staff: selectedNote.staff});
     }
 
     // TODO - mõtle siin ,kuidas asendada viimane noot, kui selle mingi operatsioon. Viimase noodi valimine tehtud, aga vaja anda ka positsioon
