@@ -54,6 +54,7 @@ export function NotationInput({lyStart, setNotationInfo, notationInfo, selectedN
     const [dotted, setDotted] = useState(false); // empty string or "d" ; in future could be also "dd"
     const [lyFocus, setLyFocus] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [showLilypond, setShowLilypond] = useState(showTimeAndClefInput); // init with true, if header row is shown -  that means it is in editor mode
 
     // notation functions (add, insert, delete
 
@@ -335,7 +336,8 @@ export function NotationInput({lyStart, setNotationInfo, notationInfo, selectedN
     }
 
     const restHandler = () => {
-        inputHandler("b/4", currentDuration +  "r");
+        const restNote =  currentClef==="bass" ? "d/3" : "b/4";
+        inputHandler(restNote, currentDuration +  "r");
     }
 
     const invertDot = (duration) => {
@@ -753,22 +755,18 @@ export function NotationInput({lyStart, setNotationInfo, notationInfo, selectedN
         );
     }
 
-
-
-    const [showLilypond, setShowLilypond] = useState(false);
-
     return <div className={"h5p-musical-dictations-uiDiv"}>
         <Grid container direction={"column"} spacing={1}>
-            {/*<Button size={"small"} onClick={ () => setShowLilypond(!showLilypond) } >Text input</Button>*/}
-
-            <FormGroup>
-                <FormControlLabel control={<Switch size={"small"} checked={showLilypond}
-                                                   onChange={ () => {
-                                                       setShowLilypond(!showLilypond);
-                                                       if (resizeFunction) resizeFunction();
-                                                   } } />}
-                                  label={t.textInput} />
-            </FormGroup>
+            { !showTimeAndClefInput && showLilypond && // do not show the control in editor - then no choice, showLilypond should be true and the textarea always shown
+                <FormGroup>
+                    <FormControlLabel control={<Switch size={"small"} checked={showLilypond}
+                                                       onChange={() => {
+                                                           setShowLilypond(!showLilypond);
+                                                           if (resizeFunction) resizeFunction();
+                                                       }}/>}
+                                      label={t.textInput}/>
+                </FormGroup>
+            }
             {showLilypond && <Grid container direction={"column"} spacing={1}>
                 <Grid item>{t.lilypondNotationLabel}:</Grid>
                 <Grid item>
