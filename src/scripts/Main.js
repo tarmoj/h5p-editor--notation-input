@@ -48,14 +48,15 @@ const translations =   {
 };
 
 
-export default function Main( lyString=oldLyString , setLyString, t= translations ) {
+export default function Main( {lyString=oldLyString , setLyString, t= translations }) {
 
     const [notationInfo, setNotationInfo] =useState(defaultNotationInfo); // lyStart - temporary
     const [ selectedNote, setSelectedNote] = useState({ measure: 0, note:-1, staff:0 } );
 
 
     useEffect( ()=> {
-        const seedNotation =lyString ?  parseLilypondDictation(oldLyString) : defaultNotationInfo;
+        console.log("Start. Old lystring: ", lyString);
+        const seedNotation =lyString ?  parseLilypondDictation(lyString) : defaultNotationInfo;
         setNotationInfo(seedNotation);
     }, [] ); // set the proper starting content for NotationInput
 
@@ -64,7 +65,7 @@ export default function Main( lyString=oldLyString , setLyString, t= translation
         if (notationInfo) {
             const newLyString = notationInfoToLyString(notationInfo);
             if (setLyString && newLyString && newLyString !== oldLyString ) {
-                //setLyString(newLyString); // setLyString is not a function in Preview
+                setLyString(newLyString); // setLyString is not a function in Preview
                 console.log("new lyString: ", newLyString, setLyString);
             }
         }

@@ -25,7 +25,7 @@ export default class NotationWidget {
 
     this.oldLyString = decodeHtml(params);
 
-    console.log("Editor constructor: params, old LyString:", params, this.oldLyString);
+    console.log("Editor constructor: old LyString:", this.oldLyString);
 
 
     // Callbacks to call when parameters change
