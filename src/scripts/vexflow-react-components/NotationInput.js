@@ -755,7 +755,7 @@ export function NotationInput({lyStart, setNotationInfo, notationInfo, selectedN
         );
     }
 
-    return <div className={"h5p-musical-dictations-uiDiv"}>
+    return <div className={"h5p-musical-dictations-uiDiv h5peditor-notationInput-margin-top"} >
         <Grid container direction={"column"} spacing={1}>
             { !showTimeAndClefInput && showLilypond && // do not show the control in editor - then no choice, showLilypond should be true and the textarea always shown
                 <FormGroup>
