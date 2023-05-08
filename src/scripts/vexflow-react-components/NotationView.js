@@ -8,7 +8,7 @@ const VF = VexFlow.Flow;
 const { Renderer } = VF;
 
 
-export function EditorNotationView({
+export function NotationView({
                                  notationInfo = defaultNotationInfo,
                                  width = 500, // this will be expanded when notation will grow longer
                                  height = 140,
@@ -39,6 +39,8 @@ export function EditorNotationView({
         const context = renderer.getContext();
         context.clear();
         context.setFont('Arial', 10, '').setBackgroundFillStyle('#eeeedd');
+
+        //console.log("Selected note in draw hook: ", selectedNote);
 
         draw(notationInfo, context); // should we also pass renderer?
 
@@ -111,14 +113,14 @@ export function EditorNotationView({
             //console.log("Stave coordinates: ", vfStave.getX(), vfStave.getNoteStartX(), vfStave.getNoteEndX(), vfStave.getWidth());
             if (x>=vfStave.getX() && x<=vfStave.getNoteEndX()) { // was .getNoteStartX, but this is wrong in bar 1
                 measureIndex = i;
-                //console.log("Stave click in m. index ", measureIndex);
+                console.log("Stave click in m. index ", measureIndex);
                 break;
             }
         }
 
         if (measureIndex===-1) {
             console.log("No measure found");
-            return null;
+            return null; // does this break something
         }
 
         const padding = 5 ; // N // px to left and right
@@ -135,7 +137,7 @@ export function EditorNotationView({
         }
 
         if ( x<staveInfo[staffIndex][measureIndex].staveNotes.at(0).getNoteHeadBeginX()-padding ) {
-            //console.log("click before last note in bar", measureIndex);
+            console.log("click before last note in bar", measureIndex);
             return {note: 0, measure: measureIndex, staff: staffIndex}
         }
 
@@ -148,7 +150,7 @@ export function EditorNotationView({
             if (x>= note.getNoteHeadBeginX()-padding && x<=note.getNoteHeadEndX()+padding ) {
                 noteIndex = i;
             } else if (nextNote && x>note.getNoteHeadEndX()+padding && x<nextNote.getNoteHeadBeginX()-padding) {
-                //console.log("click In between after ", i);
+                console.log("click In between after ", i);
                 noteIndex = i + 0.5;
 
             }
@@ -165,7 +167,7 @@ export function EditorNotationView({
         //const vfStaves = [[], []]; //  NB! think of better name! this is vexflow staves actually. do we need to store them at all? -  later: define by stave count [ Array(notationIfo.staves.length ]
         const defaultWidth = 200;
         //const currentPositionInfo = [];
-        const newStaveInfo =  [[],[]]; //staveInfo.slice(0); // what to do if a measure is deleted? [[],[]] did not work...
+        const newStaveInfo = [[],[]];
         const allStaveNotes = [[],[]];
         //How can I pre-calculate the width of a voice?
         //
@@ -334,11 +336,10 @@ export function EditorNotationView({
 
 
         // draw selected note cursor/highlight the note if any:
-
         let cursorX = -1, cursorColor="lightblue";
         if (noteToHighlight) {
             cursorX = noteToHighlight.getNoteHeadBeginX()-5;
-        } else if (newStaveInfo[selectedNote.staff][selectedNote.measure])  {
+        } else  {
             if (selectedNote && selectedNote.note<0) { // last note
                 if (newStaveInfo[selectedNote.staff][selectedNote.measure].staveNotes.length===0) {
                     cursorX = newStaveInfo[selectedNote.staff][selectedNote.measure].vfStave.getNoteStartX() + 10; // if not notes in the bar, draw it in the beginning

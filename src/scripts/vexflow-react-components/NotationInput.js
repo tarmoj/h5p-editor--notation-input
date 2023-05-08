@@ -15,25 +15,26 @@ import 'react-piano/dist/styles.css';
 import classNames from 'classnames';
 import {
     addMeasure, removeMeasure,
-    deepClone, defaultNotationInfo,
-    getVfNoteByMidiNoteInKey,
+    deepClone,
+    getLyNoteByMidiNoteInKey, getVfNoteByMidiNoteInKey,
     notationInfoToLyString,
     noteNames,
     parseLilypondDictation
 } from "./notationUtils";
-import {EditorNotationView} from "./EditorNotationView";
-import Tie from '../../images/tie.png';
-import WholeNote from "../../images/whole.png" ; // require() does not work with Preview, do separate imports
-import HalfNote from "../../images/half.png"
-import QuarterNote from "../../images/quarter.png"
-import EightNote from "../../images/eighth.png"
-import SixteenthNote from "../../images/sixteenth.png"
-import Dot from "../../images/dot.png"
-import Rest from "../../images/rest.png"
-import AddBar from "../../images/add-bar.png"
-import NoteUp from "../../images/note-up.png"
-import NoteDown from "../../images/note-down.png"
-import DeleteBar from "../../images/delete-bar.png"
+import {NotationView} from "./NotationView";
+
+import Tie from 'images/tie.png';
+import WholeNote from "images/whole.png" ; // require() does not work with Preview, do separate imports
+import HalfNote from "images/half.png"
+import QuarterNote from "images/quarter.png"
+import EightNote from "images/eighth.png"
+import SixteenthNote from "images/sixteenth.png"
+import Dot from "images/dot.png"
+import Rest from "images/rest.png"
+import AddBar from "images/add-bar.png"
+import NoteUp from "images/note-up.png"
+import NoteDown from "images/note-down.png"
+import DeleteBar from "images/delete-bar.png"
 
 import BackspaceIcon from '@mui/icons-material/Backspace';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -42,33 +43,26 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 
 
-// TODO: this is in fact the same code as in h5p-musical-dictation NotationView - think of possibilities how to use the same file
-
-
-
-export function EditorNotationInput({ lyString="", setLyString = ()=>console.log("setLyString"), t = {"description":"empty"} }) {
+export function NotationInput({lyStart, setNotationInfo, notationInfo, selectedNote,
+                                setSelectedNote, t, resizeFunction, showTimeAndClefInput=false }) {
 
     const [keyboardStartingOctave, setKeyboardStartingOctave ] = useState(3);
-    const [lyInput, setLyInput] = useState();
+    const [lyInput, setLyInput] = useState(lyStart);
     const [currentKey, setCurrentKey] = useState("C");
     const [currentClef, setCurrentClef] = useState("treble");
     const [currentDuration, setCurrentDuration] = useState("4");
     const [dotted, setDotted] = useState(false); // empty string or "d" ; in future could be also "dd"
+    const [lyFocus, setLyFocus] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [notationInfo, setNotationInfo] = useState(lyString ?  parseLilypondDictation(lyString) : defaultNotationInfo);
-    const [ selectedNote, setSelectedNote] = useState({ measure: 0, note:-1, staff:0 } );
 
     // notation functions (add, insert, delete
 
     useEffect( () => {
-        const ly = notationInfoToLyString(notationInfo);
-        setLyString(ly);
-        setLyInput(ly);
+        setLyInput(notationInfoToLyString(notationInfo));
     } , [notationInfo]);
 
     // useEffect(() => {
     //     document.addEventListener("keydown", onKeyDown);
-    //     //notationDiv.current.addEventListener("keydown", onKeyDown)
     //     return () => {
     //         document.removeEventListener("keydown", onKeyDown);
     //     };
@@ -77,72 +71,73 @@ export function EditorNotationInput({ lyString="", setLyString = ()=>console.log
     const onKeyDown = (e) => {
         const noteNameKeys = ["c", "d", "e", "f", "g", "a", "b", "h"];
         //console.log("key pressed: ", e.key, e.ctrlKey, e.ctrl);
+        if (lyFocus) {
+            if (e.key==="Enter" && e.ctrlKey) {
+                //console.log("Ctrl + return pressed in lyinput");
+                handleLyNotation();
+                e.preventDefault(); // cancel default
+                e.stopPropagation();
+            }
 
-        if (noteNameKeys.includes(e.key.toLowerCase())) {
+        } else  { // ignore keys when focus in lilypond input
+            e.preventDefault(); // cancel default. Not sure if it good though
+            e.stopPropagation();
+            if (noteNameKeys.includes(e.key.toLowerCase())) {
 
-            const noteName = (e.key.toLowerCase()==="h") ? "B": (e.key.toLowerCase()==="b" ) ? "Bb" : e.key.toUpperCase() ;
-            console.log("Note from key", noteName);
-            let octave = (e.key.toLowerCase() === e.key ) ? "4" : "5"; // uppercase letters give 2nd octave; what about small?
-            if (e.ctrlKey) { // Ctrl + noteName -  small octava
-                octave = "3";
-                e.preventDefault(); // cancel default. Not sure if it good though
+                const noteName = (e.key.toLowerCase()==="h") ? "B": (e.key.toLowerCase()==="b" ) ? "Bb" : e.key.toUpperCase() ;
+                console.log("Note from key", noteName);
+                let octave = (e.key.toLowerCase() === e.key ) ? "4" : "5"; // uppercase letters give 2nd octave; what about small?
+                if (e.ctrlKey) { // Ctrl + noteName -  small octava
+                    octave = "3";
+                }
+                inputHandler(noteName+"/" + octave, currentDuration);
+            } else if (e.key === "ArrowLeft") {
+                if (e.ctrlKey) {
+                    console.log("Control left");
+                    nextMeasure(-1);
+                } else {
+                    //console.log("Just arrow left")
+                    nextNote(-1);
+                }
+            } else if (e.key === "ArrowRight") {
+                if (e.ctrlKey) {
+                    nextMeasure(1);
+                } else {
+                    //console.log("Just arrow right")
+                    nextNote(1);
+                }
+            } else if (e.key === "ArrowUp") {
+                noteStep(1);
+                // perhaps ctrl + up/down -  change octava?
+                e.preventDefault();
                 e.stopPropagation();
+            } else if (e.key === "ArrowDown") {
+                noteStep(-1);
+                e.preventDefault();
+                e.stopPropagation();
+            }  else if (e.key === "+") {
+                addBar();
             }
-            inputHandler(noteName+"/" + octave, currentDuration);
-        } else if (e.key === "ArrowLeft") {
-            if (e.ctrlKey) {
-                console.log("Control left");
-                nextMeasure(-1);
-                e.preventDefault(); // cancel default. Not sure if it good though
-                e.stopPropagation();
-            } else {
-                //console.log("Just arrow left")
-                nextNote(-1);
-                e.preventDefault(); // cancel default. Not sure if it good though
-                e.stopPropagation();
+            else if (e.key === "1") {
+                durationChange("1" +  (dotted ? "d" : "" ));
+            } else if (e.key === "2") {
+                durationChange("2" +  (dotted ? "d" : "" ));
+            } else if (e.key === "4") {
+                durationChange("4" +  (dotted ? "d" : "" ));
+            } else if (e.key === "8") {
+                durationChange("8" +  (dotted ? "d" : "" ));
+            } else if (e.key === "6") {
+                durationChange("16" +  (dotted ? "d" : "" ));
+            } else if (e.key === ".") {
+                dotChange();
+            } else if (e.key === "r") {
+                restHandler();
+            } else if (e.key === "t") { // tie
+                tieChange();
+            } else if (e.key === "Backspace" || e.key === "Delete") {
+                deleteHandler();
             }
-        } else if (e.key === "ArrowRight") {
-            if (e.ctrlKey) {
-                nextMeasure(1);
-                e.preventDefault(); // cancel default. Not sure if it good though
-                e.stopPropagation();
-            } else {
-                //console.log("Just arrow right")
-                nextNote(1);
-                e.preventDefault(); // cancel default. Not sure if it good though
-                e.stopPropagation();
-            }
-        } else if (e.key === "ArrowUp") {
-            noteStep(1);
-            // perhaps ctrl + up/down -  change octava?
-            e.preventDefault();
-            e.stopPropagation();
-        } else if (e.key === "ArrowDown") {
-            noteStep(-1);
-            e.preventDefault();
-            e.stopPropagation();
-        } else if (e.key === "+") {
-            addBar();
-        } else if (e.key === "1") {
-            durationChange("1" +  (dotted ? "d" : "" ));
-        } else if (e.key === "2") {
-            durationChange("2" +  (dotted ? "d" : "" ));
-        } else if (e.key === "4") {
-            durationChange("4" +  (dotted ? "d" : "" ));
-        } else if (e.key === "8") {
-            durationChange("8" +  (dotted ? "d" : "" ));
-        } else if (e.key === "6") {
-            durationChange("16" +  (dotted ? "d" : "" ));
-        } else if (e.key === ".") {
-            dotChange();
-        } else if (e.key === "r") {
-            restHandler();
-        } else if (e.key === "t") { // tie
-            tieChange();
-        } else if (e.key === "Backspace" || e.key === "Delete") {
-            deleteHandler();
         }
-
     }
 
     //useEffect( () => console.log("selectedNote: ", selectedNote), [selectedNote] );
@@ -463,7 +458,6 @@ export function EditorNotationInput({ lyString="", setLyString = ()=>console.log
             noteChange(vfNote);
         }
 
-
     }
 
 
@@ -472,10 +466,7 @@ export function EditorNotationInput({ lyString="", setLyString = ()=>console.log
         const notation = parseLilypondDictation(lyInput);
         if (notation && setNotationInfo) {
             setNotationInfo(notation);
-            setLyInput(lyInput);
-            setLyString(lyInput)
         } else {
-            setLyInput("");
             console.log("Notation error or setter not set");
         }
 
@@ -508,8 +499,7 @@ export function EditorNotationInput({ lyString="", setLyString = ()=>console.log
         console.log("selected key: ", key);
         setCurrentKey(key); // inf form C, Cm, C# etc
         const notation = deepClone(notationInfo);
-        // TODO: time and key should be the same for all staves in notationInfo
-        // temporary- set it to all staves
+        // set it to all staves
         for (let stave of notation.staves) {
             stave.key = key;
         }
@@ -536,17 +526,14 @@ export function EditorNotationInput({ lyString="", setLyString = ()=>console.log
         const time = event.target.value;
         const notation = deepClone(notationInfo);
         // TODO: time and key should be the same for all staves in notationInfo
-        // temporary- set only for all staves
+        // temporary- set for all staves
         for (let stave of notation.staves) {
             stave.time = time;
         }
         setNotationInfo(notation);
     }
 
-
-
     const createHeaderRow = () => { // time tempo etc
-        // TODO: key select in two parts -  notename, major/minor
         return (
             <Grid item container spacing={1}>
 
@@ -627,7 +614,6 @@ export function EditorNotationInput({ lyString="", setLyString = ()=>console.log
         )
     }
 
-
     const changeStartingOctave = (change=0) => {
         const startingOctave = keyboardStartingOctave;
         if (change>0 && keyboardStartingOctave < octaveData.maxOctave-2 ) {
@@ -663,52 +649,52 @@ export function EditorNotationInput({ lyString="", setLyString = ()=>console.log
 
         return (
             <>
-                <Grid container item direction={"row"} spacing={1} alignItems={"center"}>
-                    <Grid item>
-                        <ToggleButtonGroup
-                            value={currentDuration}
-                            exclusive
-                            onChange={ event => durationChange(event.currentTarget.value +  (dotted ? "d" : "" ) ) }
-                            aria-label="duration selection"
-                        >
-                            <ToggleButton value="1" aria-label="whole note" >
-                                <img src={WholeNote} />
-                                {/*<label style={{color:"red", fontSize:"0.5em", textAlign:"left",  left:"3", top:"-20" }} >1</label>*/}
-                            </ToggleButton>
-                            <ToggleButton value="2" aria-label="half note">
-                                <img src={HalfNote} />
-                            </ToggleButton>
-                            <ToggleButton value="4" aria-label="quarter note">
-                                <img src={QuarterNote} />
-                            </ToggleButton>
-                            <ToggleButton value="8" aria-label="eighth note">
-                                <img src={EightNote} />
-                            </ToggleButton>
-                            <ToggleButton value="16" aria-label="sixteenth note">
-                                <img src={SixteenthNote} />
-                            </ToggleButton>
-                        </ToggleButtonGroup>
-                    </Grid>
-                    {/*ToggleButtons is used down here to give similar look, they are simple buttons by function*/}
-                    <Grid item>
-                        <ToggleButton sx={{height:51}} value={"."} aria-label={"add or remove dot"}  onClick={() => dotChange()}>
-                            <img src={Dot} />
+            <Grid container item direction={"row"} spacing={1} alignItems={"center"}>
+                <Grid item>
+                    <ToggleButtonGroup
+                        value={currentDuration}
+                        exclusive
+                        onChange={ event => durationChange(event.currentTarget.value +  (dotted ? "d" : "" ) ) }
+                        aria-label="duration selection"
+                    >
+                        <ToggleButton value="1" aria-label="whole note" >
+                            <img src={WholeNote} />
+                            {/*<label style={{color:"red", fontSize:"0.5em", textAlign:"left",  left:"3", top:"-20" }} >1</label>*/}
                         </ToggleButton>
-                    </Grid>
-                    <Grid item>
-                        <ToggleButton  value={"rest"} aria-label={"rest"}  onClick={() => restHandler()}><img src={Rest} /></ToggleButton>
-                    </Grid>
-                    <Grid item>
-                        <ToggleButton sx={{height:51}} value={"tie"} aria-label={"add or remove tie"}  onClick={()=>tieChange()}>
-                            <img src={Tie}/>
+                        <ToggleButton value="2" aria-label="half note">
+                            <img src={HalfNote} />
                         </ToggleButton>
-                    </Grid>
-                    <Grid item>
-                        <ToggleButton sx={{height:51}} value={"delete"} aria-label={"delete"} onClick={()=>deleteHandler()}> <BackspaceIcon /> </ToggleButton>
-                    </Grid>
-
-
+                        <ToggleButton value="4" aria-label="quarter note">
+                            <img src={QuarterNote} />
+                        </ToggleButton>
+                        <ToggleButton value="8" aria-label="eighth note">
+                            <img src={EightNote} />
+                        </ToggleButton>
+                        <ToggleButton value="16" aria-label="sixteenth note">
+                            <img src={SixteenthNote} />
+                        </ToggleButton>
+                    </ToggleButtonGroup>
                 </Grid>
+                {/*ToggleButtons is used down here to give similar look, they are simple buttons by function*/}
+                <Grid item>
+                    <ToggleButton sx={{height:51}} value={"."} aria-label={"add or remove dot"}  onClick={() => dotChange()}>
+                       <img src={Dot} />
+                    </ToggleButton>
+                </Grid>
+                <Grid item>
+                    <ToggleButton  value={"rest"} aria-label={"rest"}  onClick={() => restHandler()}><img src={Rest} /></ToggleButton>
+                </Grid>
+                <Grid item>
+                    <ToggleButton sx={{height:51}} value={"tie"} aria-label={"add or remove tie"}  onClick={()=>tieChange()}>
+                        <img src={Tie}/>
+                    </ToggleButton>
+                </Grid>
+                <Grid item>
+                    <ToggleButton sx={{height:51}} value={"delete"} aria-label={"delete"} onClick={()=>deleteHandler()}> <BackspaceIcon /> </ToggleButton>
+                </Grid>
+
+
+            </Grid>
                 <Grid container item direction={"row"} spacing={1} alignItems={"center"}>
                     <Grid item>
                         <ToggleButton sx={{height:51}} value={"noteUp"} aria-label={"note up"} onClick={()=>noteStep(1)}><img src={NoteUp} /></ToggleButton>
@@ -728,6 +714,7 @@ export function EditorNotationInput({ lyString="", setLyString = ()=>console.log
                 </Grid>
             </>
         );
+
     }
 
 
@@ -768,22 +755,25 @@ export function EditorNotationInput({ lyString="", setLyString = ()=>console.log
 
 
 
-    const [showLilypond, setShowLilypond] = useState(true);
+    const [showLilypond, setShowLilypond] = useState(false);
 
-    return <div className={"h5p-musical-dictations-uiDiv h5peditor-notationInput-margin-top"} >
+    return <div className={"h5p-musical-dictations-uiDiv"}>
         <Grid container direction={"column"} spacing={1}>
-            {/*<FormGroup>*/}
-            {/*    <FormControlLabel control={<Switch size={"small"} checked={showLilypond}*/}
-            {/*                                       onChange={ () => {*/}
-            {/*                                           setShowLilypond(!showLilypond);*/}
-            {/*                                           if (resizeFunction) resizeFunction();*/}
-            {/*                                       } } />}*/}
-            {/*                      label={t.textInput} />*/}
-            {/*</FormGroup>*/}
+            {/*<Button size={"small"} onClick={ () => setShowLilypond(!showLilypond) } >Text input</Button>*/}
+
+            <FormGroup>
+                <FormControlLabel control={<Switch size={"small"} checked={showLilypond}
+                                                   onChange={ () => {
+                                                       setShowLilypond(!showLilypond);
+                                                       if (resizeFunction) resizeFunction();
+                                                   } } />}
+                                  label={t.textInput} />
+            </FormGroup>
             {showLilypond && <Grid container direction={"column"} spacing={1}>
-                {/*<Grid item>{t.lilypondNotationLabel}:</Grid>*/}
+                <Grid item>{t.lilypondNotationLabel}:</Grid>
                 <Grid item>
-                    <textarea rows="3" cols="50" value={lyInput} tabIndex={-1}
+                    <textarea rows="3" cols="50" value={lyInput}
+                              tabIndex={-1}
                               onKeyDown={ event => {
                                   if (event.key==="Enter" && event.ctrlKey)  {
                                       handleLyNotation();
@@ -796,9 +786,9 @@ export function EditorNotationInput({ lyString="", setLyString = ()=>console.log
                     <Button onClick={handleLyNotation}>{t.engrave}</Button>
                 </Grid>
             </Grid> }
-            {createHeaderRow()}
+            { showTimeAndClefInput && createHeaderRow()}
             <div tabIndex={-1} onKeyDown={onKeyDown}>
-                <EditorNotationView id="userNotation" div={"score"} notationInfo={notationInfo} selectedNote={selectedNote} setSelectedNote={setSelectedNote} t={t} />
+                <NotationView id="userNotation" div={"score"} notationInfo={notationInfo} selectedNote={selectedNote} setSelectedNote={setSelectedNote} t={t} />
             </div>
             {createButtonsRow()}
             {createPianoRow()}
