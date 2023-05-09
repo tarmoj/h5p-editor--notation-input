@@ -61,15 +61,13 @@ export function NotationView({
 
     const handleClick = (event) => {
 
-        //console.log("Target: ", event.target, event.target.getBoundingClientRect().x );
-        //const offsetX = rendererRef.current.getContext().svg.getBoundingClientRect().x  + window.scrollX ;//event.target.getBoundingClientRect().x;
-        const offsetX = 0; // in case of css dispplay:block no correction seems to be needed
-        const offsetY = 0; //event.target.getBoundingClientRect().y;
-        //console.log("OffsetX: ", offsetX);
+        const div = container.current;
+        const calculatedX = event.clientX - div.getBoundingClientRect().x + div.scrollLeft;
+        //console.log("layerX, clientX, calculated , scrollLeft: ",  event.layerX, event.clientX,  calculatedX, div.scrollLeft);
 
-        let x = (event.layerX - offsetX)  / scale;
-        let y = event.layerY / scale;
-        //console.log("Clicked: ", x,y, offsetX, window.scrollX);
+        let x =calculatedX / scale;
+        let y = event.layerY / scale; // may need also correction similar to calculated X
+        //console.log("Clicked: ", x,y);
 
         // y is different when scrolled!! try to get Y from stave
         const svgY = rendererRef.current.getContext().svg.getBoundingClientRect().y  + window.scrollY ;
