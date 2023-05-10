@@ -6,6 +6,9 @@ originaalis:
 arenduseks prooviks:
 
 
+TODO:
+ style (ülaserv)
+ editori puhul näita alati lilypondi ja ära näita valiknuppu (seo showTimeAndX prop)
 
 validate -  kasuta parseLyString() ja kui null, siis viga; Kuidas märkida? kas punane joon lyKasti ümber? võibolla ei viitsi.
 

@@ -1,22 +1,11 @@
 import '../styles/h5peditor-notationInput.css';
 import React from "react";
 import * as ReactDOM from "react-dom";
-import {EditorNotationInput} from "./components/EditorNotationInput";
-import {parseLilypondString, decodeHtml} from "./components/notationUtils";
+import Main from "./Main";
+import {parseLilypondString, decodeHtml} from "./vexflow-react-components/notationUtils";
 
 const $ = H5P.jQuery;
 
-// temporary -
-const correct = `
-    \\clef "treble" \\key c \\major \\time 2/4  
-    c'4 c'8 d'8 | 
-    e'4 e'8 f'8 | 
-    g'8 a'8 g'8 f'8 | 
-    g'4 g'4 \\bar "|."             
-        `;
-
-const start = ` \\clef "treble" \\key c \\major \\time 2/4  
-    c'4 `;
 
 /** Class for Boilerplate H5P widget */
 export default class NotationWidget {
@@ -36,7 +25,7 @@ export default class NotationWidget {
 
     this.oldLyString = decodeHtml(params);
 
-    console.log("Editor constructor: params, old LyString:", params, this.oldLyString);
+    console.log("Editor constructor: old LyString:", this.oldLyString);
 
 
     // Callbacks to call when parameters change
@@ -116,8 +105,7 @@ export default class NotationWidget {
     // this.root is the container for React content
     ReactDOM.render(
       <div>
-        <EditorNotationInput  lyString={this.oldLyString}  setLyString={this.setLyString}  t={  this.l10n }  />
-
+        <Main  lyString={this.oldLyString}  setLyString={this.setLyString}  t={  this.l10n }  />
       </div>,
       this.root
     );
