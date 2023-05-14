@@ -25,6 +25,7 @@ export default class NotationWidget {
 
     this.oldLyString = decodeHtml(params);
 
+    //console.log("editor params: ", params);
     //console.log("Editor constructor: old LyString:", this.oldLyString);
 
     // translations

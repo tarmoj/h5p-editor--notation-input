@@ -1,6 +1,6 @@
 {
   "name": "h5p-editor-notation-input",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Notation input widget",
   "private": true,
   "scripts": {
