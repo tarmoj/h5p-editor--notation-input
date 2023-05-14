@@ -25,14 +25,7 @@ export default class NotationWidget {
 
     this.oldLyString = decodeHtml(params);
 
-    console.log("Editor constructor: old LyString:", this.oldLyString);
-
-
-    // Callbacks to call when parameters change
-    //this.changes = [];
-
-    // Let parent handle ready callbacks of children
-    //this.passReadies = true;
+    //console.log("Editor constructor: old LyString:", this.oldLyString);
 
     // translations
 
@@ -43,36 +36,20 @@ export default class NotationWidget {
       class: 'field h5peditor-notationInput'
     });
 
-    // Instantiate original field (or create your own and call setValue)
-    // probably this creates the text field and I need to have something like createItem in degreeInput
-    //this.fieldInstance = new H5PEditor.widgets[this.field.type](this.parent, this.field, this.params, this.setValue);
-    //this.fieldInstance.appendTo(this.$container);
-
     // lilypondInput
     this.lyString = "";
 
     this.setLyString = lyString => {
-      console.log("reported lyString: ", lyString);
+      //console.log("reported lyString: ", lyString);
       this.lyString=lyString;
       this.validate();
-      //this.setValue(this.field, lyString) //  setValue called in validate()
     }
 
     //const resize = () => { console.log("resize function called", this); this.trigger("resize"); } // to be forwarded to React components
 
-
-
-    // Relay changes
-    // if (this.fieldInstance.changes) {
-    //   this.fieldInstance.changes.push(() => {
-    //     this.handleFieldChange();
-    //   });
-    // }
-
     // Errors (or add your own)
     this.$errors = this.$container.find('.h5p-errors');
 
-    // Use H5PEditor.t('H5PEditor.Boilerplate', 'foo'); to output translatable strings
   }
 
 
@@ -127,9 +104,7 @@ export default class NotationWidget {
 
     console.log("Validate called, result: ", result);
 
-
     this.$errors.html('');
-
 
     //console.log("Result is: ", ok, valueArray);
     if (!result) {
@@ -137,8 +112,6 @@ export default class NotationWidget {
       this.$errors.append(H5PEditor.createError(this.l10n.lilypondStringNotCorrect || "Error in lilypond input!"));
       return false;
     } else {
-      // Test:
-      this.$errors.append(H5PEditor.createError("Kõik on tegelikult korras!"));
       this.setValue(this.field, this.lyString);
       return this.lyString;
     }
