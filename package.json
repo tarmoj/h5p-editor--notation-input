@@ -1,12 +1,12 @@
 {
   "name": "h5p-editor-notation-input",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Notation input widget",
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "stylelint './src/**/*.scss' && eslint './src/**/*.js'",
-    "build": "cross-env NODE_ENV=development webpack",
+    "build": "cross-env NODE_ENV=production webpack",
     "watch": "webpack --watch"
   },
   "repository": {
